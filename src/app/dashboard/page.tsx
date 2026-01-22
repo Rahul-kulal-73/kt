@@ -3,36 +3,72 @@
 import DashboardHeader from './DashboardHeader';
 import LeftSection from './LeftSection';
 import RightSection from './RightSection';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 const Dashboard = () => {
-  // Mock data
-  const [familyTree, setFamilyTree] = useState({
-    id: '1',
-    name: 'My Family Tree',
-    description: 'A comprehensive family heritage tree',
-    updated_at: new Date().toISOString(),
-  });
+  const { user } = useAuth();
+  const [familyTrees, setFamilyTrees] = useState<any[]>([]); // Using array as user might have multiple
+  const [loading, setLoading] = useState(true);
 
-  const [familyMembers] = useState([
-    { id: '1', name: 'John Doe' },
-    { id: '2', name: 'Jane Doe' },
-    { id: '3', name: 'James Doe' },
-  ]);
+  // For MVP compatibility with LeftSection which expects single tree for now or List
+  // Let's assume LeftSection can accept a list or we just pass the first one
+  const activeTree = familyTrees.length > 0 ? familyTrees[0] : null;
 
-  const [loading] = useState(false);
+  useEffect(() => {
+    const fetchTrees = async () => {
+      if (user?._id) {
+        try {
+          const res = await fetch(`/api/trees?userId=${user._id}`);
+          if (res.ok) {
+            const data = await res.json();
+            const mapped = data.map((t: any) => ({
+              id: t._id, // Map _id to id
+              name: t.name,
+              description: t.description,
+              updated_at: t.updated_at
+            }));
+            setFamilyTrees(mapped);
+          }
+        } catch (error) {
+          console.error('Failed to fetch trees', error);
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        setLoading(false);
+      }
+    };
+    fetchTrees();
+  }, [user]);
 
   const handleCreateTree = async () => {
-    if (!familyTree) {
+    if (user?._id) {
       try {
-        setFamilyTree({
-          id: '1',
-          name: 'My Family Tree',
-          description: 'A comprehensive family heritage tree',
-          updated_at: new Date().toISOString(),
+        const res = await fetch('/api/trees', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            user_id: user._id,
+            name: `${user.first_name}'s Family Tree`,
+            description: 'My family heritage'
+          })
         });
+
+        if (res.ok) {
+          const newTree = await res.json();
+          setFamilyTrees(prev => [...prev, {
+            id: newTree._id,
+            name: newTree.name,
+            description: newTree.description,
+            updated_at: newTree.updated_at
+          }]);
+          toast.success('Family tree created');
+        }
       } catch (error) {
-        console.error('Failed to create family tree:', error);
+        console.error('Failed to create tree', error);
+        toast.error('Failed to create tree');
       }
     }
   };
@@ -43,9 +79,9 @@ const Dashboard = () => {
 
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-12 gap-8">
-          <LeftSection 
-            familyTree={familyTree}
-            familyMembers={familyMembers}
+          <LeftSection
+            familyTree={activeTree}
+            familyMembers={[]} // We don't fetch members here for MVP summary yet, or we could
             loading={loading}
             onCreateTree={handleCreateTree}
           />

@@ -1,4 +1,4 @@
-import { 
+import {
   TreePine,
   Star,
   Plus,
@@ -53,7 +53,7 @@ const FamilyTreeHero = ({ familyTree, familyMembers, loading, onCreateTree }: Fa
                 <div className="flex items-center gap-4 text-sm text-gray-600">
                   <span>{familyMembers.length} members</span>
                   <span>•</span>
-                  <span>Updated {new Date(familyTree.updated_at).toLocaleDateString()}</span>
+                  <span>Updated {new Date(familyTree.updated_at).toLocaleDateString('en-GB')}</span>
                 </div>
               </div>
             </div>
