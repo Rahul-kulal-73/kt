@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/app/dashboard/FamilyTreeBuilder/ui/button';
-import { Input } from '@/app/dashboard/FamilyTreeBuilder/ui/input';
-import { Label } from '@/app/dashboard/FamilyTreeBuilder/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/dashboard/FamilyTreeBuilder/ui/card';
-import { Separator } from '@/app/dashboard/FamilyTreeBuilder/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -66,7 +66,6 @@ const Register = () => {
       toast.error(error.message || "Registration Failed");
     } else {
       toast.success("Success! Please check your email to verify your account");
-      // Redirect handled by useEffect
     }
     setLoading(false);
   };
@@ -74,7 +73,6 @@ const Register = () => {
   return (
     <div className="min-h-screen bg-[#F5F2E9] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Back to home */}
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 mb-6 transition-colors">
           <ArrowLeft className="h-4 w-4" />
           Back to KutumbaTree
@@ -90,7 +88,6 @@ const Register = () => {
 
           <CardContent className="space-y-6">
             <form onSubmit={handleSubmit}>
-              {/* Registration Form */}
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
@@ -198,7 +195,6 @@ const Register = () => {
               </div>
             </div>
 
-            {/* Social Registration */}
             <div className="space-y-3">
               <Button className="w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}>
                 <Mail className="h-4 w-4 mr-2" />
@@ -211,7 +207,6 @@ const Register = () => {
               </Button>
             </div>
 
-            {/* Free Features */}
             <div className="rounded-lg p-4" style={{ backgroundColor: '#f5e6e9' }}>
               <h4 className="font-medium text-sm mb-2" style={{ color: '#64303A' }}>Free Account Includes:</h4>
               <ul className="space-y-1 text-xs text-gray-600">

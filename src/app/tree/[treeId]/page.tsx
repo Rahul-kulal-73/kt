@@ -1,4 +1,4 @@
-import FamilyTreeBuilder from '@/app/dashboard/FamilyTreeBuilder/FamilyTreeBuilder';
+import FamilyTreeBuilder from '@/components/family-tree/FamilyTreeBuilder';
 
 interface PageProps {
     params: Promise<{
@@ -7,7 +7,6 @@ interface PageProps {
 }
 
 export default async function TreePage({ params }: PageProps) {
-    // Await params if needed in the future, currently FamilyTreeBuilder manages its own state
     const { treeId } = await params;
 
     return <FamilyTreeBuilder treeId={treeId} />;

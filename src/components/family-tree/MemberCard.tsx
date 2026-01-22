@@ -1,7 +1,7 @@
 import React from 'react';
-import { Plus, User, Heart, Camera, Pencil } from 'lucide-react';
-import { Button } from '../ui/button';
-import { FamilyMember } from '../hooks/useFamilyTree';
+import { Plus, User, Heart, Pencil } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { FamilyMember } from '@/components/hooks/useFamilyTree';
 import { cn } from '@/lib/utils';
 
 interface MemberCardProps {
@@ -43,8 +43,8 @@ export const MemberCard: React.FC<MemberCardProps> = ({
 
     return (
         <div className="relative group">
-            {/* Add Parent Button - Top */}
-            {showAddButtons && !hasParents && onAddParent && (
+            {/* Add Parent Button - Top (not allowed for root person) */}
+            {showAddButtons && !hasParents && !isRoot && onAddParent && (
                 <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-20">
                     <Button
                         size="sm"
@@ -64,7 +64,7 @@ export const MemberCard: React.FC<MemberCardProps> = ({
             <div
                 onClick={onClick}
                 className={cn(
-                    "relative bg-card rounded-lg cursor-pointer transition-all duration-200 w-[160px] shadow-md hover:shadow-lg border-2",
+                    "relative bg-card rounded-lg cursor-pointer transition-all duration-200 w-40 shadow-md hover:shadow-lg border-2",
                     // Color coding: cyan/blue for blood relatives, coral/red for in-laws
                     isInLaw
                         ? "border-rose-400"
@@ -94,10 +94,6 @@ export const MemberCard: React.FC<MemberCardProps> = ({
                             ) : (
                                 <User className="h-8 w-8 text-muted-foreground/50" />
                             )}
-                            {/* Camera icon overlay */}
-                            <div className="absolute bottom-0 right-0 w-5 h-5 bg-background rounded-full flex items-center justify-center border border-border">
-                                <Camera className="h-3 w-3 text-muted-foreground" />
-                            </div>
                         </div>
                     </div>
 

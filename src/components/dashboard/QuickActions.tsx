@@ -49,7 +49,7 @@ const QuickActions = ({ familyTree }: QuickActionsProps) => {
               disabled
             >
               <Upload className="h-5 w-5" />
-              Upload Photos
+              Import Data
             </button>
           </div>
         </div>

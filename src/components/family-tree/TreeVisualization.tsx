@@ -1,8 +1,8 @@
 import React, { useState, useRef, useCallback, useMemo } from 'react';
-import { Card, CardContent } from '../ui/card';
-import { Button } from '../ui/button';
-import { ZoomIn, ZoomOut, RotateCcw, Plus, Users, Move } from 'lucide-react';
-import { FamilyMember, Relationship } from '../hooks/useFamilyTree';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { ZoomIn, ZoomOut, RotateCcw, Plus, Users, Move, Crosshair } from 'lucide-react';
+import { FamilyMember, Relationship } from '@/components/hooks/useFamilyTree';
 import { MemberCard } from './MemberCard';
 
 interface TreeVisualizationProps {
@@ -325,131 +325,176 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
         const elements: React.JSX.Element[] = [];
         const memberPositions = new Map(positionedMembers.map(pm => [pm.member.id, pm]));
         const processedSpouses = new Set<string>();
-        const processedParentChild = new Set<string>();
+        const processedChildren = new Set<string>();
 
+        // Draw spouse connections and grouped parent-child lines for couples
         relationships.forEach((rel, idx) => {
+            if (rel.relationship_type !== 'spouse') return;
+
+            const key = [rel.person1_id, rel.person2_id].sort().join('-');
+            if (processedSpouses.has(key)) return;
+            processedSpouses.add(key);
+
             const person1 = memberPositions.get(rel.person1_id);
             const person2 = memberPositions.get(rel.person2_id);
-
             if (!person1 || !person2) return;
 
-            if (rel.relationship_type === 'spouse') {
-                const key = [rel.person1_id, rel.person2_id].sort().join('-');
-                if (processedSpouses.has(key)) return;
-                processedSpouses.add(key);
+            const leftPerson = person1.x < person2.x ? person1 : person2;
+            const rightPerson = person1.x < person2.x ? person2 : person1;
 
-                const leftPerson = person1.x < person2.x ? person1 : person2;
-                const rightPerson = person1.x < person2.x ? person2 : person1;
+            const x1 = leftPerson.x + CARD_WIDTH;
+            const y1 = leftPerson.y + CARD_HEIGHT / 2;
+            const x2 = rightPerson.x;
+            const y2 = rightPerson.y + CARD_HEIGHT / 2;
+            const midX = (x1 + x2) / 2;
 
-                const x1 = leftPerson.x + CARD_WIDTH;
-                const y1 = leftPerson.y + CARD_HEIGHT / 2;
-                const x2 = rightPerson.x;
-                const y2 = rightPerson.y + CARD_HEIGHT / 2;
-                const midX = (x1 + x2) / 2;
+            elements.push(
+                <g key={`spouse-${idx}`}>
+                    <line
+                        x1={x1}
+                        y1={y1}
+                        x2={x2}
+                        y2={y2}
+                        stroke="#9ca3af"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                    />
+                    <circle
+                        cx={midX}
+                        cy={y1}
+                        r={12}
+                        fill="#fef3c7"
+                        stroke="#f59e0b"
+                        strokeWidth={2}
+                    />
+                    <circle
+                        cx={midX - 3}
+                        cy={y1}
+                        r={5}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth={1.5}
+                    />
+                    <circle
+                        cx={midX + 3}
+                        cy={y1}
+                        r={5}
+                        fill="none"
+                        stroke="#f59e0b"
+                        strokeWidth={1.5}
+                    />
+                </g>
+            );
 
-                elements.push(
-                    <g key={`spouse-${idx}`}>
-                        <line
-                            x1={x1}
-                            y1={y1}
-                            x2={x2}
-                            y2={y2}
-                            stroke="#9ca3af"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                        />
-                        <circle
-                            cx={midX}
-                            cy={y1}
-                            r={12}
-                            fill="#fef3c7"
-                            stroke="#f59e0b"
-                            strokeWidth={2}
-                        />
-                        <circle
-                            cx={midX - 3}
-                            cy={y1}
-                            r={5}
-                            fill="none"
-                            stroke="#f59e0b"
-                            strokeWidth={1.5}
-                        />
-                        <circle
-                            cx={midX + 3}
-                            cy={y1}
-                            r={5}
-                            fill="none"
-                            stroke="#f59e0b"
-                            strokeWidth={1.5}
-                        />
-                    </g>
-                );
-            } else if (rel.relationship_type === 'parent_child') {
-                const key = `${rel.person1_id}-${rel.person2_id}`;
-                if (processedParentChild.has(key)) return;
-                processedParentChild.add(key);
+            // Group children under this couple
+            const children = getChildrenOfCouple(rel.person1_id, rel.person2_id)
+                .map(childId => memberPositions.get(childId))
+                .filter((child): child is PositionedMember => !!child);
 
-                const parentSpouseId = spouseMap.get(rel.person1_id);
-                const parentSpouse = parentSpouseId ? memberPositions.get(parentSpouseId) : null;
-
-                let connectionX: number;
-
-                if (parentSpouse && Math.abs(person1.y - parentSpouse.y) < 10) {
-                    const leftParent = person1.x < parentSpouse.x ? person1 : parentSpouse;
-                    const rightParent = person1.x < parentSpouse.x ? parentSpouse : person1;
-                    connectionX = leftParent.x + CARD_WIDTH + SPOUSE_GAP / 2;
-                } else {
-                    connectionX = person1.x + CARD_WIDTH / 2;
-                }
-
-                const parentY = person1.y + CARD_HEIGHT;
-                const childX = person2.x + CARD_WIDTH / 2;
-                const childY = person2.y;
+            if (children.length > 0) {
+                const parentMidX = leftPerson.x + CARD_WIDTH + SPOUSE_GAP / 2;
+                const parentY = leftPerson.y + CARD_HEIGHT;
+                const childCenters = children.map(child => child.x + CARD_WIDTH / 2).sort((a, b) => a - b);
+                const childY = Math.min(...children.map(child => child.y));
                 const midY = parentY + (childY - parentY) / 2;
 
                 elements.push(
-                    <g key={`parent-${idx}`}>
+                    <g key={`couple-${key}`}>
                         <line
-                            x1={connectionX}
+                            x1={parentMidX}
                             y1={parentY}
-                            x2={connectionX}
+                            x2={parentMidX}
                             y2={midY}
                             stroke="#9ca3af"
                             strokeWidth={2}
                             strokeLinecap="round"
                         />
                         <line
-                            x1={connectionX}
+                            x1={childCenters[0]}
                             y1={midY}
-                            x2={childX}
+                            x2={childCenters[childCenters.length - 1]}
                             y2={midY}
                             stroke="#9ca3af"
                             strokeWidth={2}
                             strokeLinecap="round"
                         />
-                        <line
-                            x1={childX}
-                            y1={midY}
-                            x2={childX}
-                            y2={childY}
-                            stroke="#9ca3af"
-                            strokeWidth={2}
-                            strokeLinecap="round"
-                        />
+                        {children.map(child => (
+                            <line
+                                key={`child-${child.member.id}`}
+                                x1={child.x + CARD_WIDTH / 2}
+                                y1={midY}
+                                x2={child.x + CARD_WIDTH / 2}
+                                y2={child.y}
+                                stroke="#9ca3af"
+                                strokeWidth={2}
+                                strokeLinecap="round"
+                            />
+                        ))}
                     </g>
                 );
+
+                children.forEach(child => processedChildren.add(child.member.id));
             }
         });
 
+        // Draw remaining parent-child lines for single-parent cases
+        relationships.forEach((rel, idx) => {
+            if (rel.relationship_type !== 'parent_child') return;
+            if (processedChildren.has(rel.person2_id)) return;
+
+            const parent = memberPositions.get(rel.person1_id);
+            const child = memberPositions.get(rel.person2_id);
+            if (!parent || !child) return;
+
+            const parentX = parent.x + CARD_WIDTH / 2;
+            const parentY = parent.y + CARD_HEIGHT;
+            const childX = child.x + CARD_WIDTH / 2;
+            const childY = child.y;
+            const midY = parentY + (childY - parentY) / 2;
+
+            elements.push(
+                <g key={`parent-${idx}`}>
+                    <line
+                        x1={parentX}
+                        y1={parentY}
+                        x2={parentX}
+                        y2={midY}
+                        stroke="#9ca3af"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                    />
+                    <line
+                        x1={parentX}
+                        y1={midY}
+                        x2={childX}
+                        y2={midY}
+                        stroke="#9ca3af"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                    />
+                    <line
+                        x1={childX}
+                        y1={midY}
+                        x2={childX}
+                        y2={childY}
+                        stroke="#9ca3af"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                    />
+                </g>
+            );
+        });
+
         return elements;
-    }, [positionedMembers, relationships, spouseMap]);
+    }, [positionedMembers, relationships, getChildrenOfCouple]);
 
     // Pan handlers
     const handleMouseDown = useCallback((e: React.MouseEvent) => {
-        if (e.target === containerRef.current || (e.target as HTMLElement).closest('svg')) {
-            setIsDragging(true);
-            setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
-        }
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-member-card]') || target.closest('button')) return;
+
+        setIsDragging(true);
+        setDragStart({ x: e.clientX - pan.x, y: e.clientY - pan.y });
     }, [pan]);
 
     const handleMouseMove = useCallback((e: React.MouseEvent) => {
@@ -465,6 +510,29 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
         setIsDragging(false);
     }, []);
 
+    const handleTouchStart = useCallback((e: React.TouchEvent) => {
+        const target = e.target as HTMLElement;
+        if (target.closest('[data-member-card]') || target.closest('button')) return;
+        if (!e.touches.length) return;
+        const touch = e.touches[0];
+        setIsDragging(true);
+        setDragStart({ x: touch.clientX - pan.x, y: touch.clientY - pan.y });
+    }, [pan]);
+
+    const handleTouchMove = useCallback((e: React.TouchEvent) => {
+        if (isDragging && e.touches.length) {
+            const touch = e.touches[0];
+            setPan({
+                x: touch.clientX - dragStart.x,
+                y: touch.clientY - dragStart.y,
+            });
+        }
+    }, [isDragging, dragStart]);
+
+    const handleTouchEnd = useCallback(() => {
+        setIsDragging(false);
+    }, []);
+
     const handleZoomIn = () => setZoom(prev => Math.min(prev * 1.2, 2));
     const handleZoomOut = () => setZoom(prev => Math.max(prev * 0.8, 0.5));
     const handleReset = () => {
@@ -472,20 +540,45 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
         setPan({ x: 0, y: 0 });
     };
 
+    // Center the tree based on positioned members
+    const handleCenter = useCallback(() => {
+        if (positionedMembers.length === 0) return;
+
+        const minX = Math.min(...positionedMembers.map(pm => pm.x));
+        const maxX = Math.max(...positionedMembers.map(pm => pm.x + CARD_WIDTH));
+        const minY = Math.min(...positionedMembers.map(pm => pm.y));
+        const maxY = Math.max(...positionedMembers.map(pm => pm.y + CARD_HEIGHT));
+
+        const treeWidth = maxX - minX;
+        const treeHeight = maxY - minY;
+
+        const containerWidth = containerRef.current?.clientWidth || 800;
+        const containerHeight = containerRef.current?.clientHeight || 600;
+
+        // Calculate center position
+        const centerX = (containerWidth - treeWidth * zoom) / 2 - minX * zoom;
+        const centerY = (containerHeight - treeHeight * zoom) / 2 - minY * zoom;
+
+        setPan({ x: centerX, y: centerY });
+    }, [positionedMembers, zoom]);
+
     return (
-        <Card className="h-[700px] relative overflow-hidden border-2 border-border/50 shadow-lg">
+        <Card className="h-175 relative overflow-hidden border-2 border-border/50 shadow-lg">
             {/* Toolbar */}
             <div className="absolute top-4 left-4 z-30 flex items-center gap-1 bg-card/95 backdrop-blur-md rounded-xl p-1.5 shadow-lg border border-border/50">
                 <Button size="sm" variant="ghost" onClick={handleZoomOut} className="h-8 w-8 p-0 hover:bg-muted">
                     <ZoomOut className="h-4 w-4" />
                 </Button>
-                <span className="text-xs font-semibold min-w-[45px] text-center text-muted-foreground">{Math.round(zoom * 100)}%</span>
+                <span className="text-xs font-semibold min-w-11.25 text-center text-muted-foreground">{Math.round(zoom * 100)}%</span>
                 <Button size="sm" variant="ghost" onClick={handleZoomIn} className="h-8 w-8 p-0 hover:bg-muted">
                     <ZoomIn className="h-4 w-4" />
                 </Button>
                 <div className="w-px h-5 bg-border mx-1" />
                 <Button size="sm" variant="ghost" onClick={handleReset} className="h-8 w-8 p-0 hover:bg-muted">
                     <RotateCcw className="h-4 w-4" />
+                </Button>
+                <Button size="sm" variant="ghost" onClick={handleCenter} className="h-8 w-8 p-0 hover:bg-muted" title="Center Tree">
+                    <Crosshair className="h-4 w-4" />
                 </Button>
                 <div className="w-px h-5 bg-border mx-1" />
                 <Button size="sm" onClick={() => onAddMember()} className="h-8 px-3 gap-1.5 font-medium">
@@ -497,13 +590,13 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
             {/* Hint */}
             <div className="absolute bottom-4 left-4 z-30 text-xs text-muted-foreground bg-card/90 backdrop-blur-sm px-3 py-2 rounded-lg flex items-center gap-2 shadow border border-border/30">
                 <Move className="h-3.5 w-3.5" />
-                <span>Drag to pan • Hover cards for quick actions</span>
+                <span>Drag or swipe to pan • Hover cards for quick actions</span>
             </div>
 
             {/* Canvas */}
             <CardContent
                 ref={containerRef}
-                className="p-0 h-full cursor-grab active:cursor-grabbing relative overflow-hidden"
+                className="p-0 h-full cursor-grab active:cursor-grabbing relative overflow-hidden touch-none"
                 style={{
                     background: 'linear-gradient(135deg, hsl(var(--muted) / 0.3) 0%, hsl(var(--background)) 50%, hsl(var(--muted) / 0.2) 100%)',
                 }}
@@ -511,6 +604,10 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+                onTouchCancel={handleTouchEnd}
             >
                 {/* Subtle grid pattern */}
                 <div
@@ -554,6 +651,7 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
                         {positionedMembers.map((pm) => (
                             <div
                                 key={pm.member.id}
+                                data-member-card
                                 className="absolute transition-transform duration-200"
                                 style={{
                                     left: pm.x,
@@ -565,8 +663,8 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
                                     isSelected={selectedMember?.id === pm.member.id}
                                     isRoot={pm.member.is_root}
                                     onClick={() => onSelectMember(pm.member)}
-                                    onAddParent={() => onAddMember('parent', pm.member)}
-                                    onAddSpouse={() => onAddMember('spouse', pm.member)}
+                                    onAddParent={pm.member.is_root ? undefined : () => onAddMember('parent', pm.member)}
+                                    onAddSpouse={pm.hasSpouse ? undefined : () => onAddMember('spouse', pm.member)}
                                     onAddChild={() => onAddMember('child', pm.member)}
                                     hasParents={pm.hasParents}
                                     hasSpouse={pm.hasSpouse}

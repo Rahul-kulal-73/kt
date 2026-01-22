@@ -1,5 +1,3 @@
-'use client';
-
 import { TreePine, LogOut } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -30,7 +28,7 @@ const DashboardHeader = () => {
               <span className="text-xl font-bold" style={{ color: '#64303A' }}>KutumbaTree</span>
             </Link>
             <div className="hidden sm:block border-l border-gray-300 pl-4">
-              <h1 className="text-lg font-semibold">Welcome, {(user as any)?.user_metadata?.first_name || user?.email?.split('@')[0] || 'User'}!</h1>
+              <h1 className="text-lg font-semibold">Welcome, {user?.first_name || user?.email?.split('@')[0] || 'User'}!</h1>
               <p className="text-sm text-gray-600">Build and explore your family heritage</p>
             </div>
           </div>

@@ -1,18 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { X, Edit2, Save, Trash2, Calendar, Heart, ChevronDown, Lock } from 'lucide-react';
-import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { Badge } from '../ui/badge';
-import { Separator } from '../ui/separator';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '../ui/collapsible';
-import { FamilyMember } from '../hooks/useFamilyTree';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Separator } from '@/components/ui/separator';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
+import { FamilyMember } from '@/components/hooks/useFamilyTree';
 import { cn } from '@/lib/utils';
-import { toast } from '../ui/sonner';
+import { toast } from '@/components/ui/sonner';
 
 interface MemberDetailPanelProps {
     member: FamilyMember | null;
+    parents?: FamilyMember[];
+    spouse?: FamilyMember | null;
     isOpen: boolean;
     onClose: () => void;
     onUpdate: (id: string, data: Partial<FamilyMember>) => Promise<void>;
@@ -22,6 +24,8 @@ interface MemberDetailPanelProps {
 
 export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
     member,
+    parents = [],
+    spouse = null,
     isOpen,
     onClose,
     onUpdate,
@@ -44,8 +48,18 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
         }
     }, [member]);
 
+    const genderConflict =
+        isEditing &&
+        !!editData.gender &&
+        !!spouse?.gender &&
+        editData.gender === spouse.gender;
+
     const handleSave = async () => {
         if (!member) return;
+        if (genderConflict) {
+            toast.error('Parents cannot have the same gender');
+            return;
+        }
         try {
             await onUpdate(member.id, editData);
             setIsEditing(false);
@@ -100,7 +114,13 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
                     <div className="flex items-center gap-2">
                         {isEditing ? (
                             <>
-                                <Button size="sm" onClick={handleSave} className="text-white" style={{ backgroundColor: '#64303A' }}>
+                                <Button
+                                    size="sm"
+                                    onClick={handleSave}
+                                    className="text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                    style={{ backgroundColor: '#64303A' }}
+                                    disabled={genderConflict}
+                                >
                                     <Save className="h-4 w-4 mr-1" />
                                     Save
                                 </Button>
@@ -204,6 +224,15 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
                                 </Select>
                             </div>
 
+                            {genderConflict && (
+                                <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                                    <p className="text-sm font-medium text-amber-800">Gender Conflict</p>
+                                    <p className="text-xs text-amber-700 mt-0.5">
+                                        {spouse?.first_name} {spouse?.last_name} already has gender set to {spouse?.gender}. Parents cannot have the same gender.
+                                    </p>
+                                </div>
+                            )}
+
                             <div>
                                 <Label>Date of Birth</Label>
                                 <Input
@@ -268,6 +297,30 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
                         <>
                             {/* View Mode - Essential Details */}
                             <div className="space-y-4">
+                                {parents.length > 0 && (
+                                    <div>
+                                        <p className="text-sm font-semibold mb-2" style={{ color: '#64303A' }}>Parents</p>
+                                        <div className="space-y-2">
+                                            {parents.map((parent) => (
+                                                <div
+                                                    key={parent.id}
+                                                    className="flex items-center justify-between rounded-lg border p-2"
+                                                    style={{ borderColor: '#d4c5cb', backgroundColor: '#fdfaf6' }}
+                                                >
+                                                    <span className="text-sm text-gray-700">
+                                                        {parent.first_name} {parent.last_name}
+                                                    </span>
+                                                    {parent.gender && (
+                                                        <Badge variant="secondary" className="text-xs">
+                                                            {parent.gender}
+                                                        </Badge>
+                                                    )}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {birthYear && (
                                     <div className="flex items-start gap-3">
                                         <Calendar className="h-5 w-5 text-gray-500 mt-0.5" />

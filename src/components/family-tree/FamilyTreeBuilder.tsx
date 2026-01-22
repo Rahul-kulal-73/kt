@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
-import { Badge } from './ui/badge';
-import { Collapsible, CollapsibleContent, CollapsibleTrigger } from './ui/collapsible';
+import React, { useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Badge } from '@/components/ui/badge';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
     Plus,
     Users,
@@ -17,13 +17,13 @@ import {
     ChevronDown
 } from 'lucide-react';
 import Link from 'next/link';
-import { useFamilyTree, FamilyMember } from './hooks/useFamilyTree';
-import { TreeVisualization } from './components/TreeVisualization';
-import { MemberDetailPanel } from './components/MemberDetailPanel';
-import { AddRelationshipDialog } from './components/AddRelationshipDialog';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { Separator } from './ui/separator';
-import { toast } from './ui/sonner';
+import { useFamilyTree, FamilyMember } from '@/components/hooks/useFamilyTree';
+import { TreeVisualization } from './TreeVisualization';
+import { MemberDetailPanel } from './MemberDetailPanel';
+import { AddRelationshipDialog } from './AddRelationshipDialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { toast } from '@/components/ui/sonner';
 
 const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
     const {
@@ -41,6 +41,7 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
     const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false);
     const [isAddingMember, setIsAddingMember] = useState(false);
     const [isAddingRelationship, setIsAddingRelationship] = useState(false);
+    const [isCreatingMember, setIsCreatingMember] = useState(false);
 
     // For contextual add (parent/spouse/child)
     const [addContext, setAddContext] = useState<{
@@ -57,14 +58,50 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
         death_date: '',
     });
 
+    const spouseGenderConflict =
+        addContext.relationType === 'spouse' &&
+        !!addContext.relatedTo?.gender &&
+        !!newMemberData.gender &&
+        addContext.relatedTo.gender === newMemberData.gender;
+
+    const getSpouseById = (memberId: string) => {
+        const spouseRel = relationships.find(r =>
+            r.relationship_type === 'spouse' && (r.person1_id === memberId || r.person2_id === memberId)
+        );
+        if (!spouseRel) return null;
+        const spouseId = spouseRel.person1_id === memberId ? spouseRel.person2_id : spouseRel.person1_id;
+        return familyMembers.find(m => m.id === spouseId) || null;
+    };
+
+    const selectedSpouse = useMemo(() => {
+        if (!selectedMember) return null;
+        return getSpouseById(selectedMember.id);
+    }, [selectedMember, relationships, familyMembers]);
+
+    const selectedParents = useMemo(() => {
+        if (!selectedMember) return [] as FamilyMember[];
+        const parentIds = relationships
+            .filter(r => r.relationship_type === 'parent_child' && r.person2_id === selectedMember.id)
+            .map(r => r.person1_id);
+        return parentIds
+            .map(parentId => familyMembers.find(m => m.id === parentId))
+            .filter((parent): parent is FamilyMember => !!parent);
+    }, [selectedMember, relationships, familyMembers]);
+
     const handleSelectMember = (member: FamilyMember) => {
         setSelectedMember(member);
         setIsDetailPanelOpen(true);
     };
 
     const handleAddMember = async () => {
+        if (isCreatingMember) return;
         if (!newMemberData.first_name || !newMemberData.last_name) {
             toast.error('First name and last name are required');
+            return;
+        }
+
+        if (spouseGenderConflict) {
+            toast.error('Both parents cannot be of the same gender');
             return;
         }
 
@@ -75,6 +112,7 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
         }
 
         try {
+            setIsCreatingMember(true);
             const newMember = await addFamilyMember(newMemberData);
 
             // If adding with context (parent/spouse/child), create the relationship
@@ -112,6 +150,12 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                         }
                         break;
                     case 'spouse':
+                        // Validate that both parents are not of the same gender
+                        if (newMemberData.gender && addContext.relatedTo.gender &&
+                            newMemberData.gender === addContext.relatedTo.gender) {
+                            toast.error('Both parents cannot be of the same gender');
+                            return;
+                        }
                         person1_id = addContext.relatedTo.id;
                         person2_id = newMember.id;
                         relationship_type = 'spouse';
@@ -140,6 +184,8 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
         } catch (error) {
             console.error('Failed to add family member:', error);
             toast.error('Failed to add family member');
+        } finally {
+            setIsCreatingMember(false);
         }
     };
 
@@ -182,6 +228,14 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
     };
 
     const handleUpdateMember = async (id: string, data: Partial<FamilyMember>) => {
+        if (data.gender) {
+            const spouse = getSpouseById(id);
+            if (spouse?.gender && spouse.gender === data.gender) {
+                toast.error('Parents cannot have the same gender');
+                return;
+            }
+        }
+
         await updateFamilyMember(id, data);
         if (selectedMember?.id === id) {
             setSelectedMember(prev => prev ? { ...prev, ...data } : null);
@@ -258,9 +312,6 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                                     <Share2 className="h-4 w-4 mr-2" />
                                     Share
                                 </Button>
-                                <Badge className="absolute -top-2 -right-2 bg-heritage-saffron text-white text-[10px] px-1">
-                                    Soon
-                                </Badge>
                             </div>
 
                             <div className="relative">
@@ -268,9 +319,6 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                                     <Download className="h-4 w-4 mr-2" />
                                     Export
                                 </Button>
-                                <Badge className="absolute -top-2 -right-2 bg-heritage-saffron text-white text-[10px] px-1">
-                                    Soon
-                                </Badge>
                             </div>
                         </div>
                     </div>
@@ -291,6 +339,8 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
             {/* Member Detail Panel */}
             <MemberDetailPanel
                 member={selectedMember}
+                parents={selectedParents}
+                spouse={selectedSpouse}
                 isOpen={isDetailPanelOpen}
                 onClose={() => setIsDetailPanelOpen(false)}
                 onUpdate={handleUpdateMember}
@@ -401,10 +451,30 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                             </CollapsibleContent>
                         </Collapsible>
 
+                        {/* Gender Conflict Warning */}
+                        {spouseGenderConflict && (
+                            <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                                <div className="shrink-0 pt-0.5">
+                                    <svg className="h-5 w-5 text-amber-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p className="text-sm font-medium text-amber-800">Gender Conflict</p>
+                                    <p className="text-xs text-amber-700 mt-0.5">Both parents cannot be of the same gender. Please select a different gender.</p>
+                                </div>
+                            </div>
+                        )}
+
                         <div className="flex gap-2 pt-2">
-                            <Button onClick={handleAddMember} className="flex-1 text-white" style={{ backgroundColor: '#64303A' }}>
+                            <Button
+                                onClick={handleAddMember}
+                                className="flex-1 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                                style={{ backgroundColor: '#64303A' }}
+                                disabled={spouseGenderConflict || isCreatingMember}
+                            >
                                 <Plus className="h-4 w-4 mr-2" />
-                                Add Member
+                                {isCreatingMember ? 'Adding...' : 'Add Member'}
                             </Button>
                             <Button variant="outline" onClick={() => {
                                 setIsAddingMember(false);

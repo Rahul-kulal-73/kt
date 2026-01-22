@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
-import { FamilyMember } from '../hooks/useFamilyTree';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { FamilyMember } from '@/components/hooks/useFamilyTree';
+import { toast } from '@/components/ui/sonner';
 
 interface AddRelationshipDialogProps {
     open: boolean;
@@ -41,8 +42,10 @@ export const AddRelationshipDialog: React.FC<AddRelationshipDialogProps> = ({
         person2_id: '',
         relationship_type: '',
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async () => {
+        if (isSubmitting) return;
         if (!relationshipData.person1_id || !relationshipData.person2_id || !relationshipData.relationship_type) {
             return;
         }
@@ -50,6 +53,17 @@ export const AddRelationshipDialog: React.FC<AddRelationshipDialogProps> = ({
         let finalPerson1 = relationshipData.person1_id;
         let finalPerson2 = relationshipData.person2_id;
         let finalType = relationshipData.relationship_type;
+
+        // Validate spouse relationship - both parents cannot be of same gender
+        if (relationshipData.relationship_type === 'spouse') {
+            const person1 = familyMembers.find(m => m.id === relationshipData.person1_id);
+            const person2 = familyMembers.find(m => m.id === relationshipData.person2_id);
+            
+            if (person1?.gender && person2?.gender && person1.gender === person2.gender) {
+                toast.error('Both parents cannot be of the same gender');
+                return;
+            }
+        }
 
         if (relationshipData.relationship_type === 'parent_of') {
             finalType = 'parent_child';
@@ -63,6 +77,7 @@ export const AddRelationshipDialog: React.FC<AddRelationshipDialogProps> = ({
         }
 
         try {
+            setIsSubmitting(true);
             await onAddRelationship({
                 person1_id: finalPerson1,
                 person2_id: finalPerson2,
@@ -79,6 +94,8 @@ export const AddRelationshipDialog: React.FC<AddRelationshipDialogProps> = ({
             onOpenChange(false);
         } catch (error) {
             console.error('Failed to add relationship:', error);
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
@@ -154,9 +171,14 @@ export const AddRelationshipDialog: React.FC<AddRelationshipDialogProps> = ({
                         <Button
                             onClick={handleSubmit}
                             className="flex-1"
-                            disabled={!relationshipData.person1_id || !relationshipData.person2_id || !relationshipData.relationship_type}
+                            disabled={
+                                isSubmitting ||
+                                !relationshipData.person1_id ||
+                                !relationshipData.person2_id ||
+                                !relationshipData.relationship_type
+                            }
                         >
-                            Add Relationship
+                            {isSubmitting ? 'Adding...' : 'Add Relationship'}
                         </Button>
                         <Button variant="outline" onClick={() => onOpenChange(false)}>
                             Cancel

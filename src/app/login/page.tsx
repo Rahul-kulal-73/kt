@@ -1,11 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/app/dashboard/FamilyTreeBuilder/ui/button';
-import { Input } from '@/app/dashboard/FamilyTreeBuilder/ui/input';
-import { Label } from '@/app/dashboard/FamilyTreeBuilder/ui/label';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/dashboard/FamilyTreeBuilder/ui/card';
-import { Separator } from '@/app/dashboard/FamilyTreeBuilder/ui/separator';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';

@@ -1,19 +1,18 @@
 'use client';
 
-import DashboardHeader from './DashboardHeader';
-import LeftSection from './LeftSection';
-import RightSection from './RightSection';
+import DashboardHeader from '@/components/dashboard/DashboardHeader';
+import LeftSection from '@/components/dashboard/LeftSection';
+import RightSection from '@/components/dashboard/RightSection';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
 const Dashboard = () => {
   const { user } = useAuth();
-  const [familyTrees, setFamilyTrees] = useState<any[]>([]); // Using array as user might have multiple
+  const [familyTrees, setFamilyTrees] = useState<any[]>([]); 
+  const [familyMembers, setFamilyMembers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // For MVP compatibility with LeftSection which expects single tree for now or List
-  // Let's assume LeftSection can accept a list or we just pass the first one
   const activeTree = familyTrees.length > 0 ? familyTrees[0] : null;
 
   useEffect(() => {
@@ -42,6 +41,35 @@ const Dashboard = () => {
     };
     fetchTrees();
   }, [user]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      if (activeTree?.id) {
+        try {
+          const res = await fetch(`/api/members?treeId=${activeTree.id}`);
+          if (res.ok) {
+            const data = await res.json();
+            const mapped = data.map((m: any) => ({
+              id: m._id,
+              first_name: m.first_name,
+              last_name: m.last_name,
+              gender: m.gender,
+              birth_date: m.birth_date,
+              death_date: m.death_date,
+              photo_url: m.photo_url,
+              is_root: m.is_root
+            }));
+            setFamilyMembers(mapped);
+          }
+        } catch (error) {
+          console.error('Failed to fetch members', error);
+        }
+      } else {
+        setFamilyMembers([]);
+      }
+    };
+    fetchMembers();
+  }, [activeTree]);
 
   const handleCreateTree = async () => {
     if (user?._id) {
@@ -81,7 +109,7 @@ const Dashboard = () => {
         <div className="grid lg:grid-cols-12 gap-8">
           <LeftSection
             familyTree={activeTree}
-            familyMembers={[]} // We don't fetch members here for MVP summary yet, or we could
+            familyMembers={familyMembers}
             loading={loading}
             onCreateTree={handleCreateTree}
           />

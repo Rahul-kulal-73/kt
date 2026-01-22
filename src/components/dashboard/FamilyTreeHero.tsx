@@ -48,32 +48,25 @@ const FamilyTreeHero = ({ familyTree, familyMembers, loading, onCreateTree }: Fa
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <h4 className="font-medium">{familyTree.name}</h4>
+                  <h4 className="font-semibold">{familyTree.name}</h4>
+                  <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">{familyMembers.length} members</span>
                 </div>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <span>{familyMembers.length} members</span>
-                  <span>•</span>
-                  <span>Updated {new Date(familyTree.updated_at).toLocaleDateString('en-GB')}</span>
-                </div>
+                <p className="text-sm text-gray-600">{familyTree.description || 'Your family tree'}</p>
               </div>
             </div>
             <Link href={`/tree/${familyTree.id}`}>
-              <button className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-white font-medium hover:opacity-90 transition-all" style={{ backgroundColor: '#64303A' }}>
-                Open Tree
-                <ArrowRight className="h-4 w-4" />
+              <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                <ArrowRight className="h-5 w-5" style={{ color: '#64303A' }} />
               </button>
             </Link>
           </div>
         ) : (
-          <div className="text-center py-12">
-            <TreePine className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-            <h4 className="font-medium mb-2">Start Your Family Tree</h4>
-            <p className="text-sm text-gray-600 mb-4">
-              Create your family tree and start documenting your heritage.
-            </p>
-            <button onClick={onCreateTree} className="inline-flex items-center gap-2 rounded-lg px-4 py-2 text-white font-medium hover:opacity-90 transition-all" style={{ backgroundColor: '#64303A' }}>
+          <div className="text-center py-8">
+            <TreePine className="h-12 w-12 mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-500 mb-4">No family tree yet</p>
+            <button className="inline-flex items-center gap-2 rounded-md bg-gray-100 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-200" onClick={onCreateTree} disabled={loading}>
               <Plus className="h-4 w-4" />
-              Create Family Tree
+              Create Your First Tree
             </button>
           </div>
         )}
