@@ -11,13 +11,13 @@ export default function Navbar() {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4">
         <Link href="/" className="flex items-center gap-2">
           <div className="h-9 w-9 rounded-lg bg-gradient-kutumba">
-          <Image
-            src="/kutumba-tree-logo.jpg"
-            alt="Kutumba Tree Logo"
-            width={36}
-            height={36}
-            priority
-          />
+            <Image
+              src="/kutumba-tree-logo.jpg"
+              alt="Kutumba Tree Logo"
+              width={36}
+              height={36}
+              priority
+            />
           </div>
           <h1 className="text-lg font-extrabold text-kutumba-dark-text">
             <span className="text-kutumba-maroon">Kutumba</span> Tree

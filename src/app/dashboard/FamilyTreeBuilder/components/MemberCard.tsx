@@ -1,0 +1,174 @@
+import React from 'react';
+import { Plus, User, Heart, Camera, Pencil } from 'lucide-react';
+import { Button } from '../ui/button';
+import { FamilyMember } from '../hooks/useFamilyTree';
+import { cn } from '@/lib/utils';
+
+interface MemberCardProps {
+    member: FamilyMember;
+    isSelected?: boolean;
+    isRoot?: boolean;
+    isInLaw?: boolean; // New: for red/coral border styling
+    onClick: () => void;
+    onAddParent?: () => void;
+    onAddSpouse?: () => void;
+    onAddChild?: () => void;
+    showAddButtons?: boolean;
+    hasParents?: boolean;
+    hasSpouse?: boolean;
+}
+
+export const MemberCard: React.FC<MemberCardProps> = ({
+    member,
+    isSelected,
+    isRoot,
+    isInLaw = false,
+    onClick,
+    onAddParent,
+    onAddSpouse,
+    onAddChild,
+    showAddButtons = true,
+    hasParents = false,
+    hasSpouse = false,
+}) => {
+    const birthDate = member.birth_date ? new Date(member.birth_date) : null;
+    const isDeceased = !!member.death_date;
+
+    // Format birth date like "b. July 24 1986"
+    const formatBirthDate = () => {
+        if (!birthDate) return null;
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return `b. ${months[birthDate.getMonth()]} ${birthDate.getDate()} ${birthDate.getFullYear()}`;
+    };
+
+    return (
+        <div className="relative group">
+            {/* Add Parent Button - Top */}
+            {showAddButtons && !hasParents && onAddParent && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-20">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-8 h-8 rounded-md p-0 bg-card border border-border hover:bg-muted shadow-sm"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onAddParent();
+                        }}
+                    >
+                        <Plus className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                </div>
+            )}
+
+            {/* Main Card - MyHeritage style */}
+            <div
+                onClick={onClick}
+                className={cn(
+                    "relative bg-card rounded-lg cursor-pointer transition-all duration-200 w-[160px] shadow-md hover:shadow-lg border-2",
+                    // Color coding: cyan/blue for blood relatives, coral/red for in-laws
+                    isInLaw
+                        ? "border-rose-400"
+                        : "border-cyan-400",
+                    isSelected && "ring-2 ring-primary ring-offset-2 shadow-lg scale-[1.02]",
+                    isDeceased && "opacity-85"
+                )}
+            >
+                {/* Card content */}
+                <div className="p-3">
+                    {/* Avatar */}
+                    <div className="flex justify-center mb-2">
+                        <div className={cn(
+                            "w-14 h-14 rounded-full flex items-center justify-center overflow-hidden bg-muted relative",
+                            member.gender === 'male'
+                                ? "bg-blue-100 text-blue-600"
+                                : member.gender === 'female'
+                                    ? "bg-rose-100 text-rose-600"
+                                    : "bg-muted text-muted-foreground"
+                        )}>
+                            {member.photo_url ? (
+                                <img
+                                    src={member.photo_url}
+                                    alt={`${member.first_name} ${member.last_name}`}
+                                    className="w-full h-full object-cover"
+                                />
+                            ) : (
+                                <User className="h-8 w-8 text-muted-foreground/50" />
+                            )}
+                            {/* Camera icon overlay */}
+                            <div className="absolute bottom-0 right-0 w-5 h-5 bg-background rounded-full flex items-center justify-center border border-border">
+                                <Camera className="h-3 w-3 text-muted-foreground" />
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Name */}
+                    <div className="text-center">
+                        <h3 className="font-semibold text-sm leading-tight text-foreground">
+                            {member.first_name} {member.last_name}
+                        </h3>
+
+                        {/* Birth date */}
+                        {formatBirthDate() && (
+                            <p className="text-xs text-muted-foreground mt-1">
+                                {formatBirthDate()}
+                            </p>
+                        )}
+                    </div>
+                </div>
+
+                {/* Edit icon - bottom right */}
+                <div className="absolute bottom-2 right-2">
+                    <Pencil className="h-3.5 w-3.5 text-muted-foreground/50" />
+                </div>
+
+                {/* Root indicator */}
+                {isRoot && (
+                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-primary rounded-full flex items-center justify-center shadow-sm border-2 border-background">
+                        <User className="h-3 w-3 text-primary-foreground" />
+                    </div>
+                )}
+
+                {/* Deceased indicator */}
+                {isDeceased && (
+                    <div className="absolute -top-1.5 -left-1.5 w-5 h-5 bg-muted rounded-full flex items-center justify-center shadow-sm border-2 border-background">
+                        <span className="text-xs">†</span>
+                    </div>
+                )}
+            </div>
+
+            {/* Add Child Button - Bottom */}
+            {showAddButtons && onAddChild && (
+                <div className="absolute -bottom-10 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-20">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-8 h-8 rounded-md p-0 bg-card border border-border hover:bg-muted shadow-sm"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onAddChild();
+                        }}
+                    >
+                        <Plus className="h-4 w-4 text-muted-foreground" />
+                    </Button>
+                </div>
+            )}
+
+            {/* Add Spouse Button - Right (only show on hover) */}
+            {showAddButtons && !hasSpouse && onAddSpouse && (
+                <div className="absolute top-1/2 -right-10 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all duration-200 z-20">
+                    <Button
+                        size="sm"
+                        variant="outline"
+                        className="w-8 h-8 rounded-md p-0 bg-card border border-border hover:bg-muted shadow-sm"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onAddSpouse();
+                        }}
+                    >
+                        <Heart className="h-4 w-4 text-rose-400" />
+                    </Button>
+                </div>
+            )}
+        </div>
+    );
+};
