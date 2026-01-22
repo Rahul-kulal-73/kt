@@ -52,9 +52,15 @@ const Register = () => {
 
     // Phone validation (if provided)
     if (phone) {
-      const phoneRegex = /^[+]?[0-9]{10,15}$/;
-      if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
-        toast.error("Please enter a valid phone number");
+      const sanitizedPhone = phone.replace(/[\s()-]/g, '');
+      const digitsOnly = sanitizedPhone.replace(/^\+/, '');
+      const isIndian = /^\+?91\d{10}$/.test(sanitizedPhone);
+      const isUaeMobile = /^\+?9715\d{8}$/.test(sanitizedPhone);
+      const isUaeLandline = /^\+?971[2-9]\d{7}$/.test(sanitizedPhone);
+      const withinLength = digitsOnly.length >= 11 && digitsOnly.length <= 12;
+
+      if (!withinLength || !(isIndian || isUaeMobile || isUaeLandline)) {
+        toast.error("Use Indian (+91XXXXXXXXXX) or UAE (+9715XXXXXXXX/+9712XXXXXXX) numbers only");
         return;
       }
     }
@@ -134,10 +140,11 @@ const Register = () => {
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="+91 phone number"
+                    placeholder="e.g., +919876543210 or +971501234567"
                     className="mt-1 focus-visible:outline-none ring-transparent focus-visible:ring-0 focus-visible:border-orange-900"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
+                    maxLength={16}
                   />
                 </div>
 
