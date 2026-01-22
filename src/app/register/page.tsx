@@ -6,7 +6,6 @@ import { Input } from '@/app/dashboard/FamilyTreeBuilder/ui/input';
 import { Label } from '@/app/dashboard/FamilyTreeBuilder/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/dashboard/FamilyTreeBuilder/ui/card';
 import { Separator } from '@/app/dashboard/FamilyTreeBuilder/ui/separator';
-// import { useToast } from '@/hooks/use-toast'; // Replaced with sonner
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -56,17 +55,17 @@ const Register = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back to home */}
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-kutumba-maroon mb-6 transition-colors" style={{ color: '#64303A' }}>
           <ArrowLeft className="h-4 w-4" />
           Back to KutumbaTree
         </Link>
 
-        <Card className="border-2 border-primary/10">
+        <Card className="border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Start Your Heritage Journey</CardTitle>
+            <CardTitle className="text-2xl" style={{ color: '#64303A' }}>Start Your Heritage Journey</CardTitle>
             <CardDescription>
               Create your free account to build your family tree
             </CardDescription>
@@ -146,13 +145,13 @@ const Register = () => {
                     checked={agreedToTerms}
                     onChange={(e) => setAgreedToTerms(e.target.checked)}
                   />
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-600">
                     I agree to the{' '}
-                    <Link href="/terms" className="text-primary hover:text-heritage-saffron">
+                    <Link href="/terms" className="hover:opacity-80 transition-opacity" style={{ color: '#64303A' }}>
                       Terms of Service
                     </Link>{' '}
                     and{' '}
-                    <Link href="/privacy" className="text-primary hover:text-heritage-saffron">
+                    <Link href="/privacy" className="hover:opacity-80 transition-opacity" style={{ color: '#64303A' }}>
                       Privacy Policy
                     </Link>
                   </div>
@@ -160,7 +159,8 @@ const Register = () => {
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-heritage-saffron"
+                  className="w-full text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#64303A' }}
                   disabled={loading}
                 >
                   {loading ? 'Creating Account...' : 'Create Free Account'}
@@ -189,31 +189,31 @@ const Register = () => {
             </div>
 
             {/* Free Features */}
-            <div className="bg-accent/50 rounded-lg p-4">
-              <h4 className="font-medium text-sm mb-2 text-accent-foreground">Free Account Includes:</h4>
-              <ul className="space-y-1 text-xs text-muted-foreground">
+            <div className="rounded-lg p-4" style={{ backgroundColor: '#f5e6e9' }}>
+              <h4 className="font-medium text-sm mb-2" style={{ color: '#64303A' }}>Free Account Includes:</h4>
+              <ul className="space-y-1 text-xs text-gray-600">
                 <li className="flex items-center gap-2">
-                  <Check className="h-3 w-3 text-primary" />
+                  <Check className="h-3 w-3" style={{ color: '#64303A' }} />
                   25 family members
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3 w-3 text-primary" />
+                  <Check className="h-3 w-3" style={{ color: '#64303A' }} />
                   Text-only profiles
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3 w-3 text-primary" />
+                  <Check className="h-3 w-3" style={{ color: '#64303A' }} />
                   3 searches per month
                 </li>
                 <li className="flex items-center gap-2">
-                  <Check className="h-3 w-3 text-primary" />
+                  <Check className="h-3 w-3" style={{ color: '#64303A' }} />
                   Cultural features
                 </li>
               </ul>
             </div>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-gray-600">
               Already have an account?{' '}
-              <Link href="/login" className="text-primary hover:text-heritage-saffron font-medium">
+              <Link href="/login" className="font-medium hover:opacity-80 transition-opacity" style={{ color: '#64303A' }}>
                 Sign in here
               </Link>
             </div>

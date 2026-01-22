@@ -2,9 +2,11 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const { user } = useAuth();
 
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-kutumba-border bg-white/80 backdrop-blur">
@@ -37,15 +39,26 @@ export default function Navbar() {
         </div>
 
         <div className="hidden items-center gap-3 md:flex">
-          <Link className="text-sm font-semibold text-kutumba-dark-text hover:text-kutumba-maroon" href="/login">
-            Login
-          </Link>
-          <Link
-            className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
-            href="/register"
-          >
-            Start Free
-          </Link>
+          {user ? (
+            <Link
+              className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
+              href="/dashboard"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <>
+              <Link className="text-sm font-semibold text-kutumba-dark-text hover:text-kutumba-maroon" href="/login">
+                Login
+              </Link>
+              <Link
+                className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
+                href="/register"
+              >
+                Start Free
+              </Link>
+            </>
+          )}
         </div>
 
         <button
@@ -77,15 +90,26 @@ export default function Navbar() {
               About
             </Link>
             <div className="flex items-center gap-3 pt-2">
-              <Link className="text-kutumba-dark-text hover:text-kutumba-maroon" href="/login">
-                Login
-              </Link>
-              <Link
-                className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
-                href="/register"
-              >
-                Start Free
-              </Link>
+              {user ? (
+                <Link
+                  className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
+                  href="/dashboard"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <>
+                  <Link className="text-kutumba-dark-text hover:text-kutumba-maroon" href="/login">
+                    Login
+                  </Link>
+                  <Link
+                    className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba hover:bg-kutumba-maroon/90"
+                    href="/register"
+                  >
+                    Start Free
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>

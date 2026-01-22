@@ -6,7 +6,6 @@ import { Input } from '@/app/dashboard/FamilyTreeBuilder/ui/input';
 import { Label } from '@/app/dashboard/FamilyTreeBuilder/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/app/dashboard/FamilyTreeBuilder/ui/card';
 import { Separator } from '@/app/dashboard/FamilyTreeBuilder/ui/separator';
-// import { useToast } from '@/hooks/use-toast'; // Replaced with sonner
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
@@ -47,17 +46,17 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Back to home */}
-        <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary mb-6 transition-colors">
+        <Link href="/" className="inline-flex items-center gap-2 text-sm text-gray-600 hover:text-kutumba-maroon mb-6 transition-colors" style={{ color: '#64303A' }}>
           <ArrowLeft className="h-4 w-4" />
           Back to KutumbaTree
         </Link>
 
-        <Card className="border-2 border-primary/10">
+        <Card className="border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Welcome Back</CardTitle>
+            <CardTitle className="text-2xl" style={{ color: '#64303A' }}>Welcome Back</CardTitle>
             <CardDescription>
               Sign in to continue your heritage journey
             </CardDescription>
@@ -98,14 +97,15 @@ const Login = () => {
                     <input type="checkbox" className="rounded" />
                     Remember me
                   </label>
-                  <Link href="/forgot-password" className="text-primary hover:text-heritage-saffron">
+                  <Link href="/forgot-password" className="hover:opacity-80 transition-opacity" style={{ color: '#64303A' }}>
                     Forgot password?
                   </Link>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full bg-gradient-to-r from-primary to-heritage-saffron"
+                  className="w-full text-white hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#64303A' }}
                   disabled={loading}
                 >
                   {loading ? 'Signing In...' : 'Sign In'}
@@ -133,9 +133,9 @@ const Login = () => {
               </Button>
             </div>
 
-            <div className="text-center text-sm text-muted-foreground">
+            <div className="text-center text-sm text-gray-600">
               Don't have an account?{' '}
-              <Link href="/register" className="text-primary hover:text-heritage-saffron font-medium">
+              <Link href="/register" className="font-medium hover:opacity-80 transition-opacity" style={{ color: '#64303A' }}>
                 Sign up for free
               </Link>
             </div>
