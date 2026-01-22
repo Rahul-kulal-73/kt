@@ -2,12 +2,40 @@
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #111827;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: #ffffff;
+  --color-border: #e5e7eb;
+  --color-accent: #f3f4f6;
+  --color-muted-foreground: #64748b;
+  --color-kutumba-maroon: #7a1e2b;
+  --color-kutumba-green: #2e8b57;
+  --color-kutumba-teal: #1b7c7c;
+  --color-kutumba-gold: #c79a2d;
+  --color-kutumba-dark-text: #1f2937;
+  --color-kutumba-muted: #5f6b6d;
+  --color-kutumba-border: #e5e7eb;
+  --color-kutumba-light-teal: #e6f4f1;
+  --shadow-kutumba: 0 20px 50px rgba(15, 23, 42, 0.08);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+@layer utilities {
+  .bg-gradient-nature {
+    background-image: linear-gradient(120deg, #f6faf9 0%, #e6f4f1 45%, #fef6e8 100%);
+  }
+
+  .bg-gradient-kutumba {
+    background-image: linear-gradient(135deg, #2e8b57 0%, #1b7c7c 50%, #7a1e2b 100%);
+  }
 }
