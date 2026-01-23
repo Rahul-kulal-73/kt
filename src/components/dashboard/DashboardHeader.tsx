@@ -1,5 +1,6 @@
 import { TreePine, LogOut } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -10,7 +11,7 @@ const DashboardHeader = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut();
+      signOut();
       toast.success('Logged out successfully');
       router.push('/');
     } catch (error) {
@@ -23,10 +24,20 @@ const DashboardHeader = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
-              <TreePine className="h-8 w-8" style={{ color: '#64303A' }} />
-              <span className="text-xl font-bold" style={{ color: '#64303A' }}>KutumbaTree</span>
-            </Link>
+            <Link href="/" className="flex items-center gap-2 transition-transform duration-300 hover:scale-105">
+          <div className="h-10 w-10 rounded-lg overflow-hidden animate-in zoom-in duration-500">
+            <Image
+              src="/kutumba-tree-logo.jpg"
+              alt="Kutumba Tree Logo"
+              width={40}
+              height={40}
+              priority
+            />
+          </div>
+          <h1 className="text-xl font-extrabold text-kutumba-dark-text animate-in slide-in-from-left duration-500 delay-100">
+            <span className="text-kutumba-maroon">Kutumba</span> Tree
+          </h1>
+        </Link>
             <div className="hidden sm:block border-l border-gray-300 pl-4">
               <h1 className="text-lg font-semibold">Welcome, {user?.first_name || user?.email?.split('@')[0] || 'User'}!</h1>
               <p className="text-sm text-gray-600">Build and explore your family heritage</p>
