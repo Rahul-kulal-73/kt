@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -15,7 +15,10 @@ import {
     ArrowLeft,
     Lock,
     ChevronDown,
-    User
+    User,
+    Image as ImageIcon,
+    FileText,
+    Truck
 } from 'lucide-react';
 import Link from 'next/link';
 import { useFamilyTree, FamilyMember } from '@/components/hooks/useFamilyTree';
@@ -23,8 +26,15 @@ import { TreeVisualization } from './TreeVisualization';
 import { MemberDetailPanel } from './MemberDetailPanel';
 import { AddRelationshipDialog } from './AddRelationshipDialog';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/components/ui/sonner';
+import { jsPDF } from 'jspdf';
 
 const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
     const {
@@ -208,8 +218,64 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
         setIsAddingMember(true);
     };
 
-    const handleExport = () => {
-        toast.info('Export feature coming soon in Heritage Explorer!');
+    const treeRef = useRef<{ getExportData: () => Promise<{ dataUrl: string; width: number; height: number }> }>(null);
+
+    const handleExportPDF = async () => {
+        if (!treeRef.current) return;
+
+        const toastId = toast.loading('Generating PDF...');
+
+        try {
+            const { dataUrl, width, height } = await treeRef.current.getExportData();
+
+            const pdf = new jsPDF({
+                orientation: width > height ? 'landscape' : 'portrait',
+                unit: 'px',
+                format: [width, height]
+            });
+
+            pdf.addImage(dataUrl, 'PNG', 0, 0, width, height);
+            pdf.save(`${familyTree?.name || 'My_Family_Tree'}.pdf`);
+
+            toast.dismiss(toastId);
+            toast.success('Family tree exported as PDF!');
+        } catch (error) {
+            console.error('Export failed:', error);
+            toast.dismiss(toastId);
+            toast.error('Failed to export family tree');
+        }
+    };
+
+    const handleExportImage = async () => {
+        if (!treeRef.current) return;
+
+        const toastId = toast.loading('Generating Image...');
+
+        try {
+            const { dataUrl } = await treeRef.current.getExportData();
+
+            // Create a temporary link element to trigger download
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = `${familyTree?.name || 'My_Family_Tree'}.png`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            toast.dismiss(toastId);
+            toast.success('Family tree exported as Image!');
+        } catch (error) {
+            console.error('Export failed:', error);
+            toast.dismiss(toastId);
+            toast.error('Failed to export family tree image');
+        }
+    };
+
+    const handleHomeDelivery = () => {
+        toast.info('Home Delivery Feature Coming Soon', {
+            description: 'Get a high-quality printed version of your family tree delivered to your doorstep.',
+            duration: 5000,
+        });
     };
 
     const handleShare = () => {
@@ -316,10 +382,30 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                             </div>
 
                             <div className="relative">
-                                <Button variant="outline" size="sm" onClick={handleExport}>
-                                    <Download className="h-4 w-4 mr-2" />
-                                    Export
-                                </Button>
+                                <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                        <Button variant="outline" size="sm">
+                                            <Download className="h-4 w-4 mr-2" />
+                                            Export
+                                            <ChevronDown className="h-3 w-3 ml-2 opacity-50" />
+                                        </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" className="w-56">
+                                        <DropdownMenuItem onClick={handleExportPDF} className="cursor-pointer">
+                                            <FileText className="h-4 w-4 mr-2" />
+                                            Download as PDF
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem onClick={handleExportImage} className="cursor-pointer">
+                                            <ImageIcon className="h-4 w-4 mr-2" />
+                                            Download as Image
+                                        </DropdownMenuItem>
+                                        <Separator className="my-1" />
+                                        <DropdownMenuItem onClick={handleHomeDelivery} className="cursor-pointer">
+                                            <Truck className="h-4 w-4 mr-2" />
+                                            Home Delivery
+                                        </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                </DropdownMenu>
                             </div>
 
                             <Link href="/profile">
@@ -341,6 +427,7 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                     selectedMember={selectedMember}
                     onSelectMember={handleSelectMember}
                     onAddMember={handleOpenAddMember}
+                    ref={treeRef}
                 />
             </div>
 

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { ZoomIn, ZoomOut, RotateCcw, Plus, Users, Move, Crosshair } from 'lucide-react';
 import { FamilyMember, Relationship } from '@/components/hooks/useFamilyTree';
 import { MemberCard } from './MemberCard';
+import { toPng } from 'html-to-image';
 
 interface TreeVisualizationProps {
     familyMembers: FamilyMember[];
@@ -27,18 +28,61 @@ const H_GAP = 30;
 const V_GAP = 80;
 const SPOUSE_GAP = 50;
 
-export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
+export interface TreeVisualizationHandle {
+    getExportData: () => Promise<{ dataUrl: string; width: number; height: number }>;
+}
+
+export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeVisualizationProps>(({
     familyMembers,
     relationships,
     selectedMember,
     onSelectMember,
     onAddMember,
-}) => {
+}, ref) => {
     const containerRef = useRef<HTMLDivElement>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
     const [zoom, setZoom] = useState(1);
     const [pan, setPan] = useState({ x: 0, y: 0 });
     const [isDragging, setIsDragging] = useState(false);
     const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+
+    // Handle Export logic exposed via ref
+    React.useImperativeHandle(ref, () => ({
+        getExportData: async () => {
+            if (!contentRef.current) throw new Error('Tree content not found');
+
+            // 1. Calculate bounding box of the entire tree
+            if (positionedMembers.length === 0) {
+                return { dataUrl: '', width: 0, height: 0 };
+            }
+
+            const minX = Math.min(...positionedMembers.map(pm => pm.x));
+            const maxX = Math.max(...positionedMembers.map(pm => pm.x + CARD_WIDTH));
+            const minY = Math.min(...positionedMembers.map(pm => pm.y));
+            const maxY = Math.max(...positionedMembers.map(pm => pm.y + CARD_HEIGHT));
+
+            const PADDING = 50;
+            const width = maxX - minX + (PADDING * 2);
+            const height = maxY - minY + (PADDING * 2);
+
+            // 2. Generate the image with specific style overrides to force centering and full size
+            const dataUrl = await toPng(contentRef.current, {
+                quality: 0.95,
+                backgroundColor: '#F5F2E9',
+                width: width,
+                height: height,
+                style: {
+                    // Ignore current zoom/pan transform
+                    transform: `translate(${-minX + PADDING}px, ${-minY + PADDING}px)`,
+                    transformOrigin: 'top left',
+                    width: `${width}px`,
+                    height: `${height}px`,
+                }
+            });
+
+            return { dataUrl, width, height };
+        }
+    }));
 
     // Build relationship maps
     const { spouseMap, childrenMap, parentsMap } = useMemo(() => {
@@ -636,6 +680,7 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
                     </div>
                 ) : (
                     <div
+                        ref={contentRef}
                         className="absolute inset-0"
                         style={{
                             transform: `scale(${zoom}) translate(${pan.x / zoom}px, ${pan.y / zoom}px)`,
@@ -676,4 +721,6 @@ export const TreeVisualization: React.FC<TreeVisualizationProps> = ({
             </CardContent>
         </Card>
     );
-};
+});
+
+TreeVisualization.displayName = 'TreeVisualization';
