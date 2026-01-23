@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import connectToDatabase from '@/lib/db';
 import User from '@/models/User';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-this';
 
 export async function POST(request: Request) {
     try {
@@ -35,8 +38,6 @@ export async function POST(request: Request) {
             );
         }
 
-        // In a real app, we would set a session cookie or sign a JWT here.
-        // For this MVP, we return the user data and let the frontend handle "session" state.
         const userResponse = {
             _id: user._id,
             first_name: user.first_name,
@@ -44,10 +45,23 @@ export async function POST(request: Request) {
             email: user.email,
         };
 
-        return NextResponse.json({
+        // Issue JWT and set as httpOnly cookie for API auth
+        const token = jwt.sign({ userId: user._id }, JWT_SECRET, { expiresIn: '7d' });
+
+        const res = NextResponse.json({
             message: 'Login successful',
             user: userResponse,
         });
+
+        res.cookies.set('auth_token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'lax',
+            path: '/',
+            maxAge: 60 * 60 * 24 * 7, // 7 days
+        });
+
+        return res;
     } catch (error) {
         console.error('Login error:', error);
         return NextResponse.json(

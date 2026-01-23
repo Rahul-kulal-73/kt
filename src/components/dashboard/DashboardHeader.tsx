@@ -1,4 +1,4 @@
-import { TreePine, LogOut } from 'lucide-react';
+import { LogOut, User } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/contexts/AuthContext';
@@ -47,6 +47,15 @@ const DashboardHeader = () => {
             <div className="px-3 py-1 border rounded-full text-sm font-medium" style={{ borderColor: '#64303A', color: '#64303A' }}>
               Free Plan
             </div>
+            <Link
+              href="/profile"
+              className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md text-sm font-medium text-white hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#64303A' }}
+              title="Profile"
+            >
+              <User className="h-4 w-4" />
+              <span className="hidden sm:inline">Profile</span>
+            </Link>
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-3 py-2 cursor-pointer rounded-md text-sm font-medium text-white hover:opacity-90 transition-opacity"

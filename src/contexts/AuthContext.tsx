@@ -16,6 +16,7 @@ interface AuthContextType {
     signIn: (email: string, password: string) => Promise<{ error: any; user: User | null }>;
     signUp: (email: string, password: string, data: { first_name: string; last_name: string }) => Promise<{ error: any; user: User | null }>;
     signOut: () => void;
+    updateUser: (updatedUser: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -24,6 +25,7 @@ const AuthContext = createContext<AuthContextType>({
     signIn: async () => ({ error: null, user: null }),
     signUp: async () => ({ error: null, user: null }),
     signOut: () => { },
+    updateUser: () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
@@ -46,6 +48,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const res = await fetch('/api/auth/login', {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
@@ -67,6 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         try {
             const res = await fetch('/api/auth/register', {
                 method: 'POST',
+                credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password, ...extraData }),
             });
@@ -90,8 +94,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/login');
     };
 
+    const updateUser = (updatedUser: Partial<User>) => {
+        if (user) {
+            const newUser = { ...user, ...updatedUser };
+            setUser(newUser);
+            localStorage.setItem('user', JSON.stringify(newUser));
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut }}>
+        <AuthContext.Provider value={{ user, loading, signIn, signUp, signOut, updateUser }}>
             {children}
         </AuthContext.Provider>
     );

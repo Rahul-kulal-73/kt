@@ -14,7 +14,8 @@ import {
     Download,
     ArrowLeft,
     Lock,
-    ChevronDown
+    ChevronDown,
+    User
 } from 'lucide-react';
 import Link from 'next/link';
 import { useFamilyTree, FamilyMember } from '@/components/hooks/useFamilyTree';
@@ -320,6 +321,13 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                                     Export
                                 </Button>
                             </div>
+
+                            <Link href="/profile">
+                                <Button variant="outline" size="sm">
+                                    <User className="h-4 w-4 mr-2" />
+                                    Profile
+                                </Button>
+                            </Link>
                         </div>
                     </div>
                 </div>

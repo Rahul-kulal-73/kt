@@ -3,6 +3,8 @@ import {
   Search,
   Plus,
   Upload,
+  BookOpen,
+  MapPin,
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -20,7 +22,7 @@ const QuickActions = ({ familyTree }: QuickActionsProps) => {
         </h3>
       </div>
       <div className="px-6 py-4">
-        <div className="grid md:grid-cols-3 gap-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Link href={familyTree ? `/tree/${familyTree.id}` : "#"}>
             <button 
               className="h-20 w-full flex flex-col items-center justify-center gap-2 rounded-lg text-white font-medium hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
@@ -29,6 +31,27 @@ const QuickActions = ({ familyTree }: QuickActionsProps) => {
             >
               <Users className="h-5 w-5" />
               Add Family Member
+            </button>
+          </Link>
+          
+          {/* Phase 2 Features */}
+          <Link href="/story">
+            <button 
+              className="h-20 w-full flex flex-col items-center justify-center gap-2 rounded-lg text-white font-medium hover:opacity-90 transition-all"
+              style={{ backgroundColor: '#2563eb' }}
+            >
+              <BookOpen className="h-5 w-5" />
+              My Life Story
+            </button>
+          </Link>
+          
+          <Link href="/timeline">
+            <button 
+              className="h-20 w-full flex flex-col items-center justify-center gap-2 rounded-lg text-white font-medium hover:opacity-90 transition-all"
+              style={{ backgroundColor: '#059669' }}
+            >
+              <MapPin className="h-5 w-5" />
+              Timeline & Map
             </button>
           </Link>
           
