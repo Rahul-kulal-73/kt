@@ -389,7 +389,7 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
                                 {!member.is_root && (
                                     <Button variant="destructive" className="w-full text-white bg-red-600 hover:bg-red-700" onClick={handleDelete}>
                                         <Trash2 className="h-4 w-4 mr-2" />
-                                        Delete Member
+                                        Delete Member visualization
                                     </Button>
                                 )}
                             </div>
