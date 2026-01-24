@@ -164,106 +164,104 @@ export default function TimelinePage() {
     return (
         <div className="min-h-screen" style={{ backgroundColor: '#F5F2E9' }}>
             <header className="bg-white border-b sticky top-0 z-40" style={{ borderColor: '#d4c5cb' }}>
-                <div className="container mx-auto px-4 py-3">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <Link href="/dashboard">
-                                <Button variant="ghost" size="sm">
-                                    <ArrowLeft className="h-4 w-4 mr-2" />
-                                    Back to Dashboard
-                                </Button>
-                            </Link>
-                            <div>
-                                <h1 className="text-xl font-bold" style={{ color: '#64303A' }}>
-                                    Your Timeline & Map
-                                </h1>
-                                <p className="text-sm text-gray-600">
-                                    Visual journey of your life
-                                </p>
-                            </div>
+                <div className="container mx-auto px-3 sm:px-4 py-3">
+                    <div className="flex items-center justify-between gap-2 sm:gap-4">
+                        <Link href="/dashboard">
+                            <Button variant="ghost" size="sm" className="h-8 w-8 sm:h-auto sm:w-auto p-0 sm:px-3">
+                                <ArrowLeft className="h-4 w-4" />
+                                <span className="hidden sm:inline ml-2">Back</span>
+                            </Button>
+                        </Link>
+                        <div className="flex-1 min-w-0">
+                            <h1 className="text-base sm:text-xl font-bold truncate" style={{ color: '#64303A' }}>
+                                Your Timeline & Map
+                            </h1>
+                            <p className="text-xs sm:text-sm text-gray-600 truncate">
+                                Visual journey of your life
+                            </p>
                         </div>
                     </div>
                 </div>
             </header>
 
-            <div className="container mx-auto px-4 py-8 max-w-6xl">
+            <div className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-6xl">
                 {!profileComplete ? (
                     <Card className="border-yellow-200 bg-yellow-50">
-                        <CardHeader>
-                            <CardTitle className="flex items-center gap-2 text-yellow-800">
-                                <AlertCircle className="h-5 w-5" />
+                        <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
+                            <CardTitle className="flex items-center gap-2 text-base sm:text-lg text-yellow-800">
+                                <AlertCircle className="h-4 w-4 sm:h-5 sm:w-5" />
                                 Profile Incomplete
                             </CardTitle>
-                            <CardDescription className="text-yellow-700">
+                            <CardDescription className="text-xs sm:text-sm text-yellow-700">
                                 Complete your profile to view your timeline and map
                             </CardDescription>
                         </CardHeader>
-                        <CardContent>
-                            <p className="text-yellow-800 mb-4">
+                        <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
+                            <p className="text-xs sm:text-sm text-yellow-800 mb-4">
                                 To generate your timeline and map, we need some basic information about you:
                             </p>
-                            <ul className="list-disc list-inside space-y-2 text-yellow-700 mb-4">
+                            <ul className="list-disc list-inside space-y-2 text-xs sm:text-sm text-yellow-700 mb-4">
                                 <li>Date of birth and place of birth</li>
                                 <li>Current location</li>
                                 <li>Education, work history, and life events (optional but recommended)</li>
                             </ul>
                             <Link href="/profile">
-                                <Button style={{ backgroundColor: '#64303A', color: 'white' }}>
+                                <Button style={{ backgroundColor: '#64303A', color: 'white' }} size="sm" className="text-xs sm:text-sm">
                                     Complete Profile
                                 </Button>
                             </Link>
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="space-y-8">
+                    <div className="space-y-6 sm:space-y-8">
                         <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <Calendar className="h-5 w-5" style={{ color: '#64303A' }} />
+                            <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
+                                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: '#64303A' }} />
                                     Your Life Timeline
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="text-xs sm:text-sm">
                                     Chronological journey of your life events
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
                                 {timeline.length === 0 ? (
                                     <div className="text-center py-8">
                                         <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                        <p className="text-gray-600 mb-4">
+                                        <p className="text-sm sm:text-base text-gray-600 mb-4">
                                             No timeline events found. Add more information to your profile to see your life timeline.
                                         </p>
                                         <Link href="/profile">
-                                            <Button variant="outline">Update Profile</Button>
+                                            <Button variant="outline" size="sm" className="text-xs sm:text-sm">Update Profile</Button>
                                         </Link>
                                     </div>
                                 ) : (
                                     <div className="relative">
-                                        <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
+                                        <div className="absolute left-6 sm:left-8 top-0 bottom-0 w-0.5 bg-gray-300"></div>
 
-                                        <div className="space-y-8">
+                                        <div className="space-y-6 sm:space-y-8">
                                             {timeline.map((event, index) => {
                                                 const Icon = event.icon;
                                                 return (
-                                                    <div key={index} className="relative flex gap-6">
+                                                    <div key={index} className="relative flex gap-3 sm:gap-6">
                                                         <div
-                                                            className="shrink-0 w-16 h-16 rounded-full flex items-center justify-center z-10"
+                                                            className="shrink-0 w-12 h-12 sm:w-16 sm:h-16 rounded-full flex items-center justify-center z-10"
                                                             style={{ backgroundColor: event.color }}
                                                         >
-                                                            <Icon className="h-7 w-7 text-white" />
+                                                            <Icon className="h-5 w-5 sm:h-7 sm:w-7 text-white" />
                                                         </div>
 
-                                                        <div className="flex-1 pb-8">
-                                                            <div className="bg-white p-4 rounded-lg shadow-sm border">
-                                                                <div className="flex items-start justify-between mb-2">
-                                                                    <div>
-                                                                        <h3 className="font-semibold text-lg">{event.title}</h3>
+                                                        <div className="flex-1 pb-4 sm:pb-8">
+                                                            <div className="bg-white p-3 sm:p-4 rounded-lg shadow-sm border">
+                                                                <div className="flex items-start justify-between mb-2 gap-2">
+                                                                    <div className="flex-1 min-w-0">
+                                                                        <h3 className="font-semibold text-sm sm:text-lg break-words">{event.title}</h3>
                                                                         {event.description && (
-                                                                            <p className="text-gray-600">{event.description}</p>
+                                                                            <p className="text-xs sm:text-sm text-gray-600 break-words">{event.description}</p>
                                                                         )}
                                                                     </div>
                                                                     <span
-                                                                        className="text-sm font-bold px-3 py-1 rounded-full"
+                                                                        className="text-xs sm:text-sm font-bold px-2 sm:px-3 py-1 rounded-full shrink-0"
                                                                         style={{
                                                                             backgroundColor: `${event.color}20`,
                                                                             color: event.color
@@ -273,8 +271,8 @@ export default function TimelinePage() {
                                                                     </span>
                                                                 </div>
                                                                 {event.location && (
-                                                                    <div className="flex items-center gap-1 text-sm text-gray-500 mt-2">
-                                                                        <MapPin className="h-3 w-3" />
+                                                                    <div className="flex items-center gap-1 text-xs sm:text-sm text-gray-500 mt-2 break-words">
+                                                                        <MapPin className="h-3 w-3 shrink-0" />
                                                                         {event.location}
                                                                     </div>
                                                                 )}
@@ -290,45 +288,45 @@ export default function TimelinePage() {
                         </Card>
 
                         <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">
-                                    <MapPin className="h-5 w-5" style={{ color: '#64303A' }} />
+                            <CardHeader className="px-3 sm:px-6 py-3 sm:py-4">
+                                <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                                    <MapPin className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: '#64303A' }} />
                                     Location History
                                 </CardTitle>
-                                <CardDescription>
+                                <CardDescription className="text-xs sm:text-sm">
                                     Places you&apos;ve lived and traveled
                                 </CardDescription>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="px-3 sm:px-6 pb-3 sm:pb-6">
                                 {locations.length === 0 ? (
                                     <div className="text-center py-8">
                                         <MapPin className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                                        <p className="text-gray-600 mb-4">
+                                        <p className="text-sm sm:text-base text-gray-600 mb-4">
                                             No locations found. Add location history to your profile to see them mapped here.
                                         </p>
                                         <Link href="/profile">
-                                            <Button variant="outline">Add Locations</Button>
+                                            <Button variant="outline" size="sm" className="text-xs sm:text-sm">Add Locations</Button>
                                         </Link>
                                     </div>
                                 ) : (
-                                    <div className="space-y-4">
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-3 sm:space-y-4">
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                                             {locations.map((loc, index) => (
-                                                <div key={index} className="p-4 border rounded-lg bg-white">
-                                                    <div className="flex items-start gap-3">
+                                                <div key={index} className="p-3 sm:p-4 border rounded-lg bg-white">
+                                                    <div className="flex items-start gap-2 sm:gap-3">
                                                         <div
-                                                            className="shrink-0 w-10 h-10 rounded-full flex items-center justify-center"
+                                                            className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center"
                                                             style={{ backgroundColor: '#64303A' }}
                                                         >
-                                                            <MapPin className="h-5 w-5 text-white" />
+                                                            <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                                                         </div>
-                                                        <div className="flex-1">
-                                                            <h4 className="font-semibold">{loc.location}</h4>
-                                                            <p className="text-sm text-gray-600">
+                                                        <div className="flex-1 min-w-0">
+                                                            <h4 className="font-semibold text-sm sm:text-base break-words">{loc.location}</h4>
+                                                            <p className="text-xs sm:text-sm text-gray-600 break-words">
                                                                 {[loc.city, loc.state, loc.country].filter(Boolean).join(', ')}
                                                             </p>
                                                             {loc.description && (
-                                                                <p className="text-sm text-gray-500 mt-1">{loc.description}</p>
+                                                                <p className="text-xs text-gray-500 mt-1 break-words">{loc.description}</p>
                                                             )}
                                                             <span
                                                                 className="inline-block text-xs font-semibold mt-2 px-2 py-1 rounded"
@@ -345,8 +343,8 @@ export default function TimelinePage() {
                                             ))}
                                         </div>
 
-                                        <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                                            <p className="text-blue-900 text-sm">
+                                        <div className="p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                                            <p className="text-blue-900 text-xs sm:text-sm break-words">
                                                 🗺️ <strong>Coming soon:</strong> Interactive Google Maps visualization showing your journey across cities and countries.
                                             </p>
                                         </div>
