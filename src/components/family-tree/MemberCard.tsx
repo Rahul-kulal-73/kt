@@ -59,16 +59,18 @@ export const MemberCard: React.FC<MemberCardProps> = ({
                 </button>
             )}
 
-            {/* Avatar */}
-            <div className={styles.avatar}>
-                {member.photo_url ? (
-                    <img src={member.photo_url} alt={member.first_name} />
-                ) : (
-                    member.first_name[0]
-                )}
+            {/* Avatar Wrapper */}
+            <div style={{ position: 'relative' }}>
+                <div className={styles.avatar}>
+                    {member.photo_url ? (
+                        <img src={member.photo_url} alt={member.first_name} />
+                    ) : (
+                        member.first_name[0]
+                    )}
+                </div>
                 {member.is_root && (
                     <div
-                        className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 rounded-full p-1 shadow-xs border border-white z-10"
+                        className="absolute -top-2 -right-2 bg-yellow-400 text-yellow-900 rounded-full p-1 shadow-xs border border-white z-20"
                         title="Tree Owner"
                     >
                         <Crown size={12} fill="currentColor" />

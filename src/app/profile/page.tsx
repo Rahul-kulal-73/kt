@@ -8,15 +8,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
-import { 
-    User, 
-    Calendar, 
-    MapPin, 
-    GraduationCap, 
-    Briefcase, 
-    Heart, 
+import {
+    User,
+    Calendar,
+    MapPin,
+    GraduationCap,
+    Briefcase,
+    Heart,
     ArrowLeft,
     Plus,
     X,
@@ -62,12 +61,13 @@ export default function ProfilePage() {
     const router = useRouter();
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    
+
     const [firstName, setFirstName] = useState('');
+    const [middleName, setMiddleName] = useState('');
     const [lastName, setLastName] = useState('');
-    
+
     const [originalData, setOriginalData] = useState<any>(null);
-    
+
     const [phone, setPhone] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState('');
     const [placeOfBirth, setPlaceOfBirth] = useState('');
@@ -75,13 +75,13 @@ export default function ProfilePage() {
     const [birthState, setBirthState] = useState('');
     const [birthCountry, setBirthCountry] = useState('India');
     const [currentLocation, setCurrentLocation] = useState('');
-    
+
     const [education, setEducation] = useState<EducationEntry[]>([]);
-    
+
     const [workHistory, setWorkHistory] = useState<WorkEntry[]>([]);
-    
+
     const [lifeEvents, setLifeEvents] = useState<LifeEvent[]>([]);
-    
+
     const [locationHistory, setLocationHistory] = useState<LocationHistory[]>([]);
 
     useEffect(() => {
@@ -89,10 +89,11 @@ export default function ProfilePage() {
             router.push('/login');
             return;
         }
-        
+
         setFirstName(user.first_name || '');
+        setMiddleName(user.middle_name || '');
         setLastName(user.last_name || '');
-        
+
         fetchProfile();
     }, [user]);
 
@@ -102,7 +103,7 @@ export default function ProfilePage() {
             if (response.ok) {
                 const data = await response.json();
                 const profile = data.user;
-                
+
                 setPhone(profile.phone || '');
                 setDateOfBirth(profile.date_of_birth ? new Date(profile.date_of_birth).toISOString().split('T')[0] : '');
                 setPlaceOfBirth(profile.place_of_birth || '');
@@ -110,14 +111,15 @@ export default function ProfilePage() {
                 setBirthState(profile.birth_state || '');
                 setBirthCountry(profile.birth_country || 'India');
                 setCurrentLocation(profile.current_location || '');
-                
+
                 setEducation(profile.education || []);
                 setWorkHistory(profile.work_history || []);
                 setLifeEvents(profile.life_events || []);
                 setLocationHistory(profile.location_history || []);
-                
+
                 setOriginalData({
                     first_name: user?.first_name || '',
+                    middle_name: user?.middle_name || '',
                     last_name: user?.last_name || '',
                     phone: profile.phone || '',
                     date_of_birth: profile.date_of_birth ? new Date(profile.date_of_birth).toISOString().split('T')[0] : '',
@@ -145,14 +147,15 @@ export default function ProfilePage() {
 
     const hasChanges = () => {
         if (!originalData) return true;
-        
+
         const currentEducation = education.filter(e => e.degree || e.institution);
         const currentWorkHistory = workHistory.filter(w => w.company || w.position);
         const currentLifeEvents = lifeEvents.filter(e => e.title);
         const currentLocationHistory = locationHistory.filter(l => l.location);
-        
+
         return (
             firstName !== originalData.first_name ||
+            middleName !== originalData.middle_name ||
             lastName !== originalData.last_name ||
             phone !== originalData.phone ||
             dateOfBirth !== originalData.date_of_birth ||
@@ -182,6 +185,7 @@ export default function ProfilePage() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     first_name: firstName,
+                    middle_name: middleName,
                     last_name: lastName,
                     phone,
                     date_of_birth: dateOfBirth ? new Date(dateOfBirth) : undefined,
@@ -200,12 +204,14 @@ export default function ProfilePage() {
             if (response.ok) {
                 updateUser({
                     first_name: firstName,
+                    middle_name: middleName,
                     last_name: lastName,
                 });
-                
+
                 toast.success('Profile updated successfully!');
                 setOriginalData({
                     first_name: firstName,
+                    middle_name: middleName,
                     last_name: lastName,
                     phone,
                     date_of_birth: dateOfBirth,
@@ -314,8 +320,8 @@ export default function ProfilePage() {
                                 <p className="text-sm text-gray-600">Complete your profile to unlock AI stories & timelines</p>
                             </div>
                         </div>
-                        <Button 
-                            onClick={handleSave} 
+                        <Button
+                            onClick={handleSave}
                             disabled={saving}
                             style={{ backgroundColor: '#64303A', color: 'white' }}
                         >
@@ -345,13 +351,22 @@ export default function ProfilePage() {
                         <CardDescription>Your personal details</CardDescription>
                     </CardHeader>
                     <CardContent className="space-y-4">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <div>
                                 <Label htmlFor="firstName" className="font-semibold">First Name</Label>
                                 <Input
                                     id="firstName"
                                     value={firstName}
                                     onChange={(e) => setFirstName(e.target.value)}
+                                    className="mt-1"
+                                />
+                            </div>
+                            <div>
+                                <Label htmlFor="middleName" className="font-semibold">Middle Name</Label>
+                                <Input
+                                    id="middleName"
+                                    value={middleName}
+                                    onChange={(e) => setMiddleName(e.target.value)}
                                     className="mt-1"
                                 />
                             </div>
@@ -777,8 +792,8 @@ export default function ProfilePage() {
                 </Card>
 
                 <div className="flex justify-end">
-                    <Button 
-                        onClick={handleSave} 
+                    <Button
+                        onClick={handleSave}
                         disabled={saving}
                         size="lg"
                         style={{ backgroundColor: '#64303A', color: 'white' }}
@@ -786,12 +801,12 @@ export default function ProfilePage() {
                         {saving ? (
                             <>
                                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                                Saving...
+                                <span className="ml-2">Saving...</span>
                             </>
                         ) : (
                             <>
                                 <Save className="h-4 w-4 mr-2" />
-                                Save Profile
+                                <span className="ml-2">Save Profile</span>
                             </>
                         )}
                     </Button>

@@ -4,6 +4,7 @@ export interface IMember {
     _id: mongoose.Types.ObjectId;
     tree_id: mongoose.Types.ObjectId;
     first_name: string;
+    middle_name?: string;
     last_name: string;
     gender?: string;
     birth_date?: Date;
@@ -18,6 +19,7 @@ export interface IMember {
 const MemberSchema = new Schema<IMember>({
     tree_id: { type: Schema.Types.ObjectId, ref: 'FamilyTree', required: true },
     first_name: { type: String, required: true },
+    middle_name: { type: String },
     last_name: { type: String, required: true },
     gender: { type: String },
     birth_date: { type: Date },

@@ -4,6 +4,7 @@ import React, { useMemo, useState, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
@@ -18,9 +19,11 @@ import {
     User,
     Image as ImageIcon,
     FileText,
-    Truck
+    Truck,
+    UserPlus
 } from 'lucide-react';
 import Link from 'next/link';
+import { useAuth } from '@/contexts/AuthContext';
 import { useFamilyTree, FamilyMember } from '@/components/hooks/useFamilyTree';
 import { TreeVisualization, TreeVisualizationHandle } from './TreeVisualization';
 import { MemberDetailPanel } from './MemberDetailPanel';
@@ -48,11 +51,13 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
         addRelationship,
     } = useFamilyTree(treeId);
 
+    const { user } = useAuth();
     const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
     const [isDetailPanelOpen, setIsDetailPanelOpen] = useState(false);
     const [isAddingMember, setIsAddingMember] = useState(false);
     const [isAddingRelationship, setIsAddingRelationship] = useState(false);
     const [isCreatingMember, setIsCreatingMember] = useState(false);
+    const [initGender, setInitGender] = useState<string>('male');
 
     const [addContext, setAddContext] = useState<{
         relationType?: 'parent' | 'spouse' | 'child';
@@ -506,6 +511,79 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                         <Button style={{ backgroundColor: '#64303A', color: 'white' }}>Go to Dashboard</Button>
                     </Link>
                 </div>
+            </div>
+        );
+    }
+
+    if (familyMembers.length === 0 && user) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-4" style={{ backgroundColor: '#F5F2E9' }}>
+                <Card className="max-w-md w-full shadow-xl border-t-4 border-t-[#64303A]">
+                    <CardHeader className="text-center pb-2">
+                        <div className="mx-auto bg-orange-100 w-16 h-16 rounded-full flex items-center justify-center mb-4">
+                            <UserPlus className="h-8 w-8 text-[#64303A]" />
+                        </div>
+                        <CardTitle className="text-2xl font-bold text-[#64303A]">Welcome, {user.first_name}!</CardTitle>
+                        <CardDescription>
+                            Your family tree is currently empty. Let's start by adding you as the root member.
+                        </CardDescription>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="space-y-4">
+                            <div className="p-4 bg-orange-50 rounded-lg border border-orange-100">
+                                <div className="text-sm font-medium text-gray-500 mb-1">You will be added as:</div>
+                                <div className="text-lg font-bold text-[#64303A]">
+                                    {user.first_name} {user.middle_name ? user.middle_name + ' ' : ''}{user.last_name}
+                                </div>
+                                <div className="text-sm text-gray-500">{user.email}</div>
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Select your gender to begin:</Label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div
+                                        className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-all ${newMemberData.gender === 'male' ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                        onClick={() => setNewMemberData(prev => ({ ...prev, gender: 'male' }))}
+                                    >
+                                        <div className="font-semibold text-blue-700">Male</div>
+                                    </div>
+                                    <div
+                                        className={`cursor-pointer border-2 rounded-lg p-3 text-center transition-all ${newMemberData.gender === 'female' ? 'border-pink-500 bg-pink-50' : 'border-gray-200 hover:border-gray-300'}`}
+                                        onClick={() => setNewMemberData(prev => ({ ...prev, gender: 'female' }))}
+                                    >
+                                        <div className="font-semibold text-pink-700">Female</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <Button
+                                className="w-full text-white font-semibold py-6"
+                                style={{ backgroundColor: '#64303A' }}
+                                onClick={async () => {
+                                    if (!user) return;
+                                    if (!initGender) {
+                                        toast.error("Please select a gender");
+                                        return;
+                                    }
+                                    try {
+                                        await addFamilyMember({
+                                            first_name: user.first_name,
+                                            middle_name: user.middle_name || '',
+                                            last_name: user.last_name,
+                                            gender: initGender,
+                                            is_root: true
+                                        });
+                                        toast.success("Tree initialized successfully!");
+                                    } catch (e) {
+                                        toast.error("Failed to initialize tree");
+                                    }
+                                }}
+                            >
+                                Initialize My Tree
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
             </div>
         );
     }
