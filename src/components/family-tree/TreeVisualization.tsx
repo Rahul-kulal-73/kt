@@ -314,7 +314,8 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
 
     // Calculate connection lines
     const connections = useMemo(() => {
-        const paths: React.ReactNode[] = [];
+        const lines: React.ReactNode[] = [];
+        const icons: React.ReactNode[] = [];
 
         familyMembers.forEach(person => {
             const pos = layout[person.id];
@@ -336,15 +337,13 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
                     const divorceDate = relData?.divorce_date;
                     const hasDates = !!marriageDate;
 
-                    paths.push(
-                        <g key={`spouse-${person.id}-${sid}`}>
-                            {/* Tooltip Title */}
+                    // Push Line to 'lines' array
+                    lines.push(
+                        <g key={`spouse-line-${person.id}-${sid}`}>
                             <title>
                                 {marriageDate ? `Married: ${marriageDate}` : 'No Marriage Date'}
                                 {divorceDate ? `\nDivorced: ${divorceDate}` : ''}
                             </title>
-
-                            {/* Connection Line */}
                             <path
                                 d={`M ${startX} ${y} L ${endX} ${y}`}
                                 stroke={divorceDate ? "#ef4444" : "#d1d5db"} // Red line if divorced
@@ -352,23 +351,32 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
                                 strokeDasharray={divorceDate ? "4 2" : "none"} // Dashed if divorced
                                 fill="none"
                             />
-                            {/* Wedding Ring Icon */}
-                            <g transform={`translate(${midX - 10}, ${y - 10})`} className="cursor-help">
-                                {/* Outer Glow/Bg circle */}
-                                <circle cx="10" cy="10" r="14" fill="white" />
-                                <circle cx="10" cy="10" r="12" fill={hasDates ? "#FEF3C7" : "#fee2e2"} stroke={hasDates ? "#F59E0B" : "#ef4444"} strokeWidth="1.5" />
+                        </g>
+                    );
 
-                                {/* Interlocking Rings */}
+                    // Push Icon to 'icons' array (Renders on top)
+                    icons.push(
+                        <g key={`spouse-icon-${person.id}-${sid}`} transform={`translate(${midX - 10}, ${y - 10})`} className="cursor-help">
+                            {/* Background Circle */}
+                            <circle cx="10" cy="10" r="14" fill="white" />
+                            <circle cx="10" cy="10" r="12" fill={divorceDate ? "#fee2e2" : (hasDates ? "#FEF3C7" : "#fee2e2")} stroke={divorceDate ? "#ef4444" : (hasDates ? "#F59E0B" : "#ef4444")} strokeWidth="1.5" />
+
+                            {divorceDate ? (
+                                // Divorced: Broken/Separated Rings
+                                <g transform="translate(4, 6) scale(0.6)">
+                                    <path d="M5,8 A5,5 0 1,0 10,13 M9,3 L15,13" fill="none" stroke="#ef4444" strokeWidth="2.5" />
+                                    <path d="M13,3 A5,5 0 1,1 18,8" fill="none" stroke="#ef4444" strokeWidth="2.5" />
+                                </g>
+                            ) : !hasDates ? (
+                                // Pending Date: Warning Exclamation
+                                <text x="10" y="16" textAnchor="middle" fontSize="14" fill="#ef4444" fontWeight="bold">!</text>
+                            ) : (
+                                // Married: Interlocking Rings
                                 <g transform="translate(4, 6) scale(0.6)">
                                     <circle cx="8" cy="8" r="7" fill="none" stroke="#D97706" strokeWidth="2.5" />
                                     <circle cx="15" cy="8" r="7" fill="none" stroke="#D97706" strokeWidth="2.5" />
                                 </g>
-
-                                {/* Warning Indicator (Exclamation Mark) */}
-                                {!hasDates && (
-                                    <text x="10" y="28" textAnchor="middle" fontSize="10" fill="#ef4444" fontWeight="bold">!</text>
-                                )}
-                            </g>
+                            )}
                         </g>
                     );
                 }
@@ -434,7 +442,7 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
                     allChildren.forEach(cid => {
                         const cPos = layout[cid];
                         if (cPos) {
-                            paths.push(
+                            lines.push(
                                 <path
                                     key={`child-${person.id}-${cid}`}
                                     d={drawElbowInfo(startX, startY, cPos.x + CARD_W / 2, cPos.y)}
@@ -449,7 +457,7 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
             }
         });
 
-        return paths;
+        return [...lines, ...icons];
     }, [layout, familyMembers, spouseMap, childrenMap, personMap, relationshipMap]);
 
 

@@ -375,8 +375,8 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
                                 {/* SPOUSE DETAILS SECTION */}
                                 {spouse && (
                                     <div>
-                                        <p className="text-sm font-semibold mb-2" style={{ color: '#64303A' }}>Spouse & Relationship</p>
-                                        <div className="rounded-lg border p-3 bg-white" style={{ borderColor: '#d4c5cb' }}>
+                                        <p className="text-sm font-semibold mb-2 text-emerald-800">Spouse & Relationship</p>
+                                        <div className="rounded-lg border p-3 bg-white border-emerald-100/50 shadow-sm">
                                             <div className="flex items-center justify-between mb-2">
                                                 <div className="flex items-center gap-2">
                                                     <Heart className="h-4 w-4 text-rose-500" />
@@ -478,43 +478,72 @@ export const MemberDetailPanel: React.FC<MemberDetailPanelProps> = ({
 
 const RelationshipEditor = ({ relationship, onUpdate }: { relationship: Relationship, onUpdate: (id: string, data: Partial<Relationship>) => Promise<void> }) => {
     const [isEditing, setIsEditing] = useState(false);
+    const [status, setStatus] = useState<'married' | 'divorced'>(relationship.divorce_date ? 'divorced' : 'married');
     const [data, setData] = useState({
         marriage_date: relationship.marriage_date || '',
         divorce_date: relationship.divorce_date || ''
     });
 
     const handleSave = async () => {
-        await onUpdate(relationship.id, data);
+        const payload = { ...data };
+        if (status === 'married') {
+            payload.divorce_date = '';
+        }
+        await onUpdate(relationship.id, payload);
         setIsEditing(false);
         toast.success("Relationship updated");
     };
 
     if (isEditing) {
         return (
-            <div className="mt-2 space-y-2 border-t pt-2 w-full">
-                <div className="grid grid-cols-2 gap-2">
-                    <div>
-                        <Label className="text-[10px] text-gray-500">Married</Label>
-                        <Input
-                            type="date"
-                            className="h-7 text-xs px-1"
-                            value={data.marriage_date}
-                            onChange={e => setData(p => ({ ...p, marriage_date: e.target.value }))}
-                        />
-                    </div>
-                    <div>
-                        <Label className="text-[10px] text-gray-500">Divorced</Label>
-                        <Input
-                            type="date"
-                            className="h-7 text-xs px-1"
-                            value={data.divorce_date}
-                            onChange={e => setData(p => ({ ...p, divorce_date: e.target.value }))}
-                        />
-                    </div>
+            <div className="mt-2 space-y-3 pt-3 w-full">
+                <div className="flex gap-2">
+                    <Button
+                        variant={status === 'married' ? "default" : "outline"}
+                        size="sm"
+                        className={`flex-1 h-7 text-xs ${status === 'married' ? 'bg-emerald-500 hover:bg-emerald-600 text-white' : ''}`}
+                        onClick={() => setStatus('married')}
+                    >
+                        Married
+                    </Button>
+                    <Button
+                        variant={status === 'divorced' ? "default" : "outline"}
+                        size="sm"
+                        className={`flex-1 h-7 text-xs ${status === 'divorced' ? 'bg-blue-500 hover:bg-blue-600 text-white' : ''}`}
+                        onClick={() => setStatus('divorced')}
+                    >
+                        Divorced
+                    </Button>
                 </div>
+
+                <div className="grid grid-cols-1 gap-2 pt-1">
+                    {status === 'married' && (
+                        <div className="flex flex-col items-center w-full">
+                            <Label className="text-[10px] text-gray-500 mb-1 w-full text-center">Marriage Date</Label>
+                            <Input
+                                type="date"
+                                className="h-7 text-xs px-2 w-[80%] text-center focus-visible:ring-emerald-600"
+                                value={data.marriage_date}
+                                onChange={e => setData(p => ({ ...p, marriage_date: e.target.value }))}
+                            />
+                        </div>
+                    )}
+                    {status === 'divorced' && (
+                        <div className="flex flex-col items-center w-full">
+                            <Label className="text-[10px] text-gray-500 mb-1 w-full text-center">Divorce Date</Label>
+                            <Input
+                                type="date"
+                                className="h-7 text-xs px-2 w-[80%] text-center focus-visible:ring-blue-600"
+                                value={data.divorce_date}
+                                onChange={e => setData(p => ({ ...p, divorce_date: e.target.value }))}
+                            />
+                        </div>
+                    )}
+                </div>
+
                 <div className="flex justify-end gap-2">
-                    <Button variant="ghost" size="sm" className="h-6 text-xs" onClick={() => setIsEditing(false)}>Cancel</Button>
-                    <Button size="sm" className="h-6 text-xs bg-[#64303A]" onClick={handleSave}>Save</Button>
+                    <Button variant="default" size="sm" className="h-6 text-xs hover:bg-red-600 bg-red-500 text-white" onClick={() => setIsEditing(false)}>Cancel</Button>
+                    <Button size="sm" className="h-6 text-xs text-white bg-emerald-600 hover:bg-emerald-700" onClick={handleSave}>Save Updates</Button>
                 </div>
             </div>
         );
@@ -532,7 +561,7 @@ const RelationshipEditor = ({ relationship, onUpdate }: { relationship: Relation
                     <span className="text-amber-600 flex items-center gap-1 justify-end"><span className="text-[10px]">Add Date</span></span>
                 )}
                 {relationship.divorce_date && (
-                    <span className="block text-red-400">Divorced: {new Date(relationship.divorce_date).toLocaleDateString()}</span>
+                    <span className="block text-red-500 font-medium mt-0.5">Divorced: {new Date(relationship.divorce_date).toLocaleDateString()}</span>
                 )}
             </div>
         </div>

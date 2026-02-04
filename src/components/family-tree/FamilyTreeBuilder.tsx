@@ -20,7 +20,8 @@ import {
     Image as ImageIcon,
     FileText,
     Truck,
-    UserPlus
+    UserPlus,
+    Heart
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
@@ -838,6 +839,59 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                                 </SelectContent>
                             </Select>
                         </div>
+
+                        {addContext.relationType === 'spouse' && (
+                            <div className="space-y-4 pt-2 border-t border-gray-100">
+                                <Label className="text-sm font-semibold text-gray-700 flex items-center gap-2">
+                                    <Heart className="h-4 w-4 text-rose-500" />
+                                    Relationship Status
+                                </Label>
+
+                                <div className="flex gap-2">
+                                    <Button
+                                        type="button"
+                                        variant={!newMemberData.divorce_date ? "default" : "outline"}
+                                        className={!newMemberData.divorce_date ? "bg-emerald-600 hover:bg-emerald-700 flex-1" : "flex-1"}
+                                        onClick={() => setNewMemberData(prev => ({ ...prev, divorce_date: '' }))}
+                                    >
+                                        Married
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant={newMemberData.divorce_date !== '' ? "default" : "outline"}
+                                        className={newMemberData.divorce_date !== '' ? "bg-blue-600 hover:bg-blue-700 flex-1" : "flex-1"}
+                                        onClick={() => setNewMemberData(prev => ({ ...prev, divorce_date: new Date().toISOString().split('T')[0] }))}
+                                    >
+                                        Divorced
+                                    </Button>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4 pt-2">
+                                    {newMemberData.divorce_date === '' && (
+                                        <div>
+                                            <Label className="text-xs">Marriage Date</Label>
+                                            <Input
+                                                type="date"
+                                                value={(newMemberData as any).marriage_date || ''}
+                                                onChange={(e) => setNewMemberData(prev => ({ ...prev, marriage_date: e.target.value } as any))}
+                                                className="focus-visible:outline-none ring-transparent focus-visible:ring-0 focus-visible:border-emerald-600"
+                                            />
+                                        </div>
+                                    )}
+                                    {newMemberData.divorce_date !== '' && (
+                                        <div>
+                                            <Label className="text-xs">Divorce Date</Label>
+                                            <Input
+                                                type="date"
+                                                value={(newMemberData as any).divorce_date || ''}
+                                                onChange={(e) => setNewMemberData(prev => ({ ...prev, divorce_date: e.target.value } as any))}
+                                                className="focus-visible:outline-none ring-transparent focus-visible:ring-0 focus-visible:border-blue-600"
+                                            />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
 
                         <div>
                             <Label htmlFor="birth_date" className="text-xs sm:text-sm">Date of Birth</Label>
