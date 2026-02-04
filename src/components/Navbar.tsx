@@ -1,150 +1,143 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
+import { Menu, X } from "lucide-react";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { user } = useAuth();
 
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <nav className="sticky top-0 z-50 w-full border-b border-kutumba-border bg-white/80 backdrop-blur animate-in fade-in duration-500">
-      <div className="mx-auto flex h-18 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-2 transition-transform duration-300 hover:scale-105">
-          <div className="h-10 w-10 rounded-lg overflow-hidden animate-in zoom-in duration-500">
+    <nav
+      className={`fixed top-0 z-50 w-full transition-all duration-300 ${scrolled
+        ? "bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100 py-3"
+        : "bg-transparent py-5"
+        }`}
+    >
+      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-3 transition-transform duration-300 hover:scale-105">
+          <div className={`relative h-10 w-10 rounded-xl overflow-hidden shadow-sm ${scrolled ? 'ring-1 ring-gray-200' : 'ring-1 ring-white/30'}`}>
             <Image
               src="/kutumba-tree-logo.jpg"
               alt="Kutumba Tree Logo"
-              width={40}
-              height={40}
+              fill
+              className="object-cover"
               priority
             />
           </div>
-          <h1 className="text-xl font-extrabold text-kutumba-dark-text animate-in slide-in-from-left duration-500 delay-100">
-            <span className="text-kutumba-maroon">Kutumba</span> Tree
+          <h1 className={`text-xl font-bold tracking-tight ${scrolled ? 'text-gray-900' : 'text-white'}`}>
+            <span className={scrolled ? "text-[#64303A]" : "text-amber-200"}>Kutumba</span> Tree
           </h1>
         </Link>
 
-        <div className="hidden items-center gap-7 text-base font-semibold text-kutumba-dark-text md:flex">
-          <Link className="transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#features">
-            Features
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-          </Link>
-          <Link className="transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#pricing">
-            Pricing
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-          </Link>
-          <Link className="transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#about">
-            About
-            <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-          </Link>
-        </div>
-
-        <div className="hidden items-center gap-3 md:flex animate-in slide-in-from-right duration-500 delay-300">
-          {user ? (
-            <>
-              {user.role === 'admin' && (
-                <Link
-                  className="text-sm font-semibold text-kutumba-dark-text transition-colors duration-300 hover:text-kutumba-maroon"
-                  href="/admin"
-                >
-                  Admin Panel
-                </Link>
-              )}
-              <Link
-                className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba transition-all duration-300 hover:bg-kutumba-maroon/90 hover:shadow-lg hover:scale-105 active:scale-95"
-                href="/dashboard"
-              >
-                Dashboard
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link className="text-sm font-semibold text-kutumba-dark-text transition-colors duration-300 hover:text-kutumba-maroon" href="/login">
-                Login
-              </Link>
-              <Link
-                className="rounded-md bg-kutumba-maroon px-4 py-2 text-sm font-semibold text-white shadow-kutumba transition-all duration-300 hover:bg-kutumba-maroon/90 hover:shadow-lg hover:scale-105 active:scale-95"
-                href="/register"
-              >
-                Start Free
-              </Link>
-            </>
-          )}
-        </div>
-
-        <button
-          type="button"
-          aria-label="Toggle menu"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="inline-flex items-center justify-center rounded-md border border-kutumba-border p-2 text-kutumba-dark-text transition-all duration-300 md:hidden hover:bg-kutumba-maroon/10"
-        >
-          <span className="sr-only">Toggle menu</span>
-          <div className="space-y-1">
-            <span className={`block h-0.5 w-5 bg-kutumba-dark-text transition-all duration-300 ${isOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
-            <span className={`block h-0.5 w-5 bg-kutumba-dark-text transition-all duration-300 ${isOpen ? 'opacity-0' : ''}`}></span>
-            <span className={`block h-0.5 w-5 bg-kutumba-dark-text transition-all duration-300 ${isOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+        {/* Desktop Links */}
+        <div className="hidden items-center gap-8 md:flex">
+          <div className={`flex items-center gap-6 text-sm font-medium ${scrolled ? 'text-gray-600' : 'text-white/90'}`}>
+            <Link className="hover:text-[#64303A] hover:bg-white/50 px-3 py-2 rounded-lg transition-all" href="#features">Features</Link>
+            <Link className="hover:text-[#64303A] hover:bg-white/50 px-3 py-2 rounded-lg transition-all" href="#pricing">Pricing</Link>
+            <Link className="hover:text-[#64303A] hover:bg-white/50 px-3 py-2 rounded-lg transition-all" href="#about">About</Link>
           </div>
+
+          <div className="flex items-center gap-3">
+            {user ? (
+              <>
+                {user.role === 'admin' && (
+                  <Link
+                    className={`text-sm font-semibold transition-colors ${scrolled ? 'text-gray-700 hover:text-[#64303A]' : 'text-white hover:text-amber-200'}`}
+                    href="/admin"
+                  >
+                    Admin
+                  </Link>
+                )}
+                <Link
+                  className="rounded-full bg-[#64303A] px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-[#64303A]/20 transition-all hover:bg-[#50262e] hover:shadow-xl hover:-translate-y-0.5"
+                  href="/dashboard"
+                >
+                  Dashboard
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  className={`text-sm font-semibold transition-colors ${scrolled ? 'text-gray-700 hover:text-[#64303A]' : 'text-white hover:text-amber-200'}`}
+                  href="/login"
+                >
+                  Login
+                </Link>
+                <Link
+                  className={`rounded-full px-5 py-2.5 text-sm font-semibold shadow-lg transition-all hover:shadow-xl hover:-translate-y-0.5 ${scrolled
+                    ? "bg-[#64303A] text-white shadow-[#64303A]/20 hover:bg-[#50262e]"
+                    : "bg-white text-[#64303A] shadow-black/10 hover:bg-amber-50"
+                    }`}
+                  href="/register"
+                >
+                  Start Free
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Toggle */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className={`md:hidden p-2 rounded-lg transition-colors ${scrolled ? 'text-gray-900 hover:bg-gray-100' : 'text-white hover:bg-white/10'}`}
+        >
+          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
-      {
-        isOpen && (
-          <div className="border-t border-kutumba-border bg-white md:hidden animate-in slide-in-from-top duration-300">
-            <div className="mx-auto flex max-w-6xl flex-col gap-3 px-4 py-6 text-sm font-semibold items-center text-center">
-              <Link className="text-kutumba-dark-text transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#features">
-                Features
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link className="text-kutumba-dark-text transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#pricing">
-                Pricing
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <Link className="text-kutumba-dark-text transition-colors duration-300 hover:text-kutumba-maroon relative group" href="#about">
-                About
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-kutumba-maroon transition-all duration-300 group-hover:w-full"></span>
-              </Link>
-              <div className="flex w-full flex-col gap-2 pt-3">
-                {user ? (
-                  <>
-                    {user.role === 'admin' && (
-                      <Link
-                        className="w-full rounded-md border border-kutumba-border px-4 py-3 text-sm font-semibold text-kutumba-dark-text transition-all duration-300 hover:text-kutumba-maroon hover:bg-kutumba-maroon/10"
-                        href="/admin"
-                      >
-                        Admin Panel
-                      </Link>
-                    )}
-                    <Link
-                      className="w-full rounded-md bg-kutumba-maroon px-4 py-3 text-sm font-semibold text-white shadow-kutumba transition-all duration-300 hover:bg-kutumba-maroon/90 hover:shadow-lg hover:scale-105 active:scale-95"
-                      href="/dashboard"
-                    >
-                      Dashboard
-                    </Link>
-                  </>
-                ) : (
-                  <>
-                    <Link
-                      className="w-full rounded-md border border-kutumba-border px-4 py-3 text-sm font-semibold text-kutumba-dark-text transition-all duration-300 hover:text-kutumba-maroon hover:bg-kutumba-maroon/10"
-                      href="/login"
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      className="w-full rounded-md bg-kutumba-maroon px-4 py-3 text-sm font-semibold text-white shadow-kutumba transition-all duration-300 hover:bg-kutumba-maroon/90 hover:shadow-lg hover:scale-105 active:scale-95"
-                      href="/register"
-                    >
-                      Start Free
-                    </Link>
-                  </>
-                )}
+      {/* Mobile Menu */}
+      {isOpen && (
+        <div className="absolute top-full left-0 w-full bg-white border-b border-gray-100 p-4 shadow-xl md:hidden animate-in slide-in-from-top-2">
+          <div className="flex flex-col gap-4">
+            <Link href="#features" className="text-gray-600 font-medium p-2 hover:bg-gray-50 rounded-lg" onClick={() => setIsOpen(false)}>Features</Link>
+            <Link href="#pricing" className="text-gray-600 font-medium p-2 hover:bg-gray-50 rounded-lg" onClick={() => setIsOpen(false)}>Pricing</Link>
+            <Link href="#about" className="text-gray-600 font-medium p-2 hover:bg-gray-50 rounded-lg" onClick={() => setIsOpen(false)}>About</Link>
+            <hr className="border-gray-100" />
+
+            {user ? (
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/dashboard"
+                  className="w-full text-center rounded-xl bg-[#64303A] py-3 text-white font-semibold"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Go to Dashboard
+                </Link>
               </div>
-            </div>
+            ) : (
+              <div className="flex flex-col gap-3">
+                <Link
+                  href="/login"
+                  className="w-full text-center rounded-xl border border-gray-200 py-3 text-gray-700 font-semibold"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="w-full text-center rounded-xl bg-[#64303A] py-3 text-white font-semibold"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Start Free
+                </Link>
+              </div>
+            )}
           </div>
-        )
-      }
-    </nav >
+        </div>
+      )}
+    </nav>
   );
 }
