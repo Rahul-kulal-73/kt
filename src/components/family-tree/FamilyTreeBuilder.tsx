@@ -348,9 +348,15 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
             // Logic for Child: If gender passed (Son/Daughter), use that.
 
             return {
-                ...prev,
+                first_name: '',
+                middle_name: '',
                 last_name: initialLastName,
-                gender: defaultGender
+                gender: defaultGender,
+                birth_date: '',
+                death_date: '',
+                photo_url: '',
+                marriage_date: '',
+                divorce_date: '',
             };
         });
         setIsAddingMember(true);
@@ -515,6 +521,17 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
     };
 
     const handleDeleteMember = async (id: string) => {
+        // Validation: Check if member has children
+        const hasChildren = relationships.some(r =>
+            r.relationship_type === 'parent_child' && r.person1_id === id
+        );
+
+        if (hasChildren) {
+            const errorMsg = 'Cannot delete member: This person has connected children. Please remove the children or parent links first.';
+            toast.error(errorMsg);
+            throw new Error(errorMsg);
+        }
+
         await deleteFamilyMember(id);
         setSelectedMember(null);
         setIsDetailPanelOpen(false);
@@ -774,6 +791,10 @@ const FamilyTreeBuilder = ({ treeId }: { treeId: string }) => {
                     setIsDetailPanelOpen(false);
                     setIsAddingRelationship(true);
                 }}
+                hasChildren={relationships.some(r =>
+                    r.relationship_type === 'parent_child' &&
+                    r.person1_id === selectedMember?.id
+                )}
             />
 
             <Dialog open={isAddingMember} onOpenChange={setIsAddingMember}>
