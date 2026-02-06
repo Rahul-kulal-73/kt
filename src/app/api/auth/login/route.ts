@@ -46,6 +46,14 @@ export async function POST(request: Request) {
             );
         }
 
+        let ip = request.headers.get('x-forwarded-for') || 'Unknown';
+        if (ip === '::1') ip = '127.0.0.1 (Localhost)';
+        
+        // Update user tracking info
+        user.last_login = new Date();
+        user.last_ip = ip;
+        await user.save();
+
         const userResponse = {
             _id: user._id,
             first_name: user.first_name,
