@@ -9,7 +9,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 opacity-5 pointer-events-none">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-150 h-150">
           <Image
-            src="/kutumba-tree-logo.jpg"
+            src="/kutumba-tree-logo.png"
             alt=""
             fill
             className="object-contain grayscale"

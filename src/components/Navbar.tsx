@@ -14,7 +14,7 @@ export default function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <div className="h-10 w-10 rounded-lg overflow-hidden">
             <Image
-              src="/kutumba-tree-logo.jpg"
+              src="/kutumba-tree-logo.png"
               alt="Kutumba Tree Logo"
               width={40}
               height={40}
