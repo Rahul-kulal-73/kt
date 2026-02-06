@@ -58,7 +58,11 @@ const Login = () => {
           Back to KutumbaTree
         </Link>
 
-        <Card className="border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
+        <Card className="relative border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border border-kutumba-gold/30 shadow-sm rounded-full px-3 py-2 z-10 w-max">
+            <span className="text-xs font-bold text-kutumba-dark-text uppercase tracking-wide">Early Access</span>
+            <span className="bg-kutumba-gold text-white text-[10px] px-2 py-0 rounded-full font-bold uppercase tracking-wider">Beta</span>
+          </div>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold">Welcome Back</CardTitle>
             <CardDescription>
@@ -137,14 +141,14 @@ const Login = () => {
               <Button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full border hover:bg-teal-600 hover:text-white"
+                className="w-full transition-all duration-300 border hover:bg-teal-600 hover:text-white"
                 style={{ borderColor: '#d4c5cb' }}
               >
                 <Mail className="h-4 w-4 mr-2" />
                 Continue with Google
               </Button>
 
-              <Button className="w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}>
+              <Button className="hidden w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}>
                 <Phone className="h-4 w-4 mr-2" />
                 Continue with Phone OTP
               </Button>

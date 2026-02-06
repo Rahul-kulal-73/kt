@@ -100,7 +100,11 @@ export default function HeroSection() {
         </div>
 
         <div className="lg:justify-self-end w-full max-w-md">
-          <div className="shadow-kutumba border border-kutumba-border bg-white/90 backdrop-blur-sm rounded-xl">
+          <div className="relative shadow-kutumba border border-kutumba-border bg-white/90 backdrop-blur-sm rounded-xl">
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border border-kutumba-gold/30 shadow-sm rounded-full px-3 py-2 z-10 w-max">
+              <span className="text-xs font-bold text-kutumba-dark-text uppercase tracking-wide">Early Access</span>
+              <span className="bg-kutumba-gold text-white text-[10px] px-2 py-0 rounded-full font-bold uppercase tracking-wider">Beta</span>
+            </div>
             <div className="p-8">
               <div className="text-center mb-6">
                 <h3 className="text-2xl font-bold text-kutumba-dark-text mb-2">

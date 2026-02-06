@@ -80,6 +80,12 @@ export default function PricingSection() {
                   Most Popular
                 </span>
               )}
+              {plan.isFree && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border border-kutumba-gold/30 shadow-sm rounded-full px-3 py-2 z-10 w-max">
+                  <span className="text-xs font-bold text-kutumba-dark-text uppercase tracking-wide">Early Access</span>
+                  <span className="bg-kutumba-gold text-white text-[10px] px-2 py-0 rounded-full font-bold uppercase tracking-wider">Beta</span>
+                </div>
+              )}
 
               <div className="text-center">
                 <h3 className="text-2xl font-semibold mb-2">{plan.name}</h3>
@@ -88,7 +94,7 @@ export default function PricingSection() {
                   {plan.isFree ? (
                     <>
                       <span className="text-kutumba-green">Free</span>
-                      <span className="text-lg text-kutumba-muted font-normal"> Forever</span>
+                      <span className="text-lg text-kutumba-muted font-normal "> Forever</span>
                     </>
                   ) : (
                     <>
@@ -105,7 +111,7 @@ export default function PricingSection() {
                   {plan.features.map((feature, index) => (
                     <li key={feature} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-kutumba-teal shrink-0 mt-0.5" />
-                      <span className={`text-sm ${(plan.popular && index > 1) || (plan.isFree && index > 5) ? "blur-sm select-none" : ""}`}>{feature}</span>
+                      <span className={`text-sm ${(plan.popular && index > 1) || (plan.isFree && index > 4) ? "blur-sm select-none" : ""}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>

@@ -105,7 +105,11 @@ const RegisterContent = () => {
           Back to KutumbaTree
         </Link>
         {/* ... Card Content ... */}
-        <Card className="border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
+        <Card className="relative border-2 shadow-lg" style={{ borderColor: '#d4c5cb' }}>
+          <div className="absolute -top-3 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-white border border-kutumba-gold/30 shadow-sm rounded-full px-3 py-2 z-10 w-max">
+            <span className="text-xs font-bold text-kutumba-dark-text uppercase tracking-wide">Early Access</span>
+            <span className="bg-kutumba-gold text-white text-[10px] px-2 py-0 rounded-full font-bold uppercase tracking-wider">Beta</span>
+          </div>
           <CardHeader className="text-center">
             <CardTitle className="text-2xl font-bold" style={{ color: '#64303A' }}>Start Your Heritage Journey</CardTitle>
             <CardDescription>
@@ -252,13 +256,13 @@ const RegisterContent = () => {
               <Button
                 type="button"
                 onClick={handleGoogleLogin}
-                className="w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}
+                className="transition-all duration-300 w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}
               >
                 <Mail className="h-4 w-4 mr-2" />
                 Sign up with Google
               </Button>
 
-              <Button className="w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}>
+              <Button className="hidden w-full border hover:bg-teal-600 hover:text-white" style={{ borderColor: '#d4c5cb' }}>
                 <Phone className="h-4 w-4 mr-2" />
                 Sign up with Phone OTP
               </Button>
@@ -277,9 +281,9 @@ const RegisterContent = () => {
                 </li>
                 <li className="flex items-center gap-2">
                   <Check className="h-3 w-3" style={{ color: '#64303A' }} />
-                  3 searches per month
+                  Limited searches per month
                 </li>
-                <li className="flex items-center gap-2">
+                <li className="flex blur-xs select-none items-center gap-2">
                   <Check className="h-3 w-3" style={{ color: '#64303A' }} />
                   Cultural features
                 </li>
