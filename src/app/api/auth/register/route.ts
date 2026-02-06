@@ -11,7 +11,7 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 export async function POST(request: Request) {
     try {
         const body = await request.json();
-        const { first_name, middle_name, last_name, email, password } = body;
+        const { first_name, middle_name, last_name, email, password, date_of_birth } = body;
 
         if (!first_name || !last_name || !email || !password) {
             return NextResponse.json(
@@ -43,6 +43,7 @@ export async function POST(request: Request) {
             last_name,
             email,
             password_hash,
+            date_of_birth,
             last_login: new Date(),
             last_ip: finalIp,
             last_location: location,

@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Mail, Phone, ArrowLeft, Check, Eye, EyeOff } from 'lucide-react';
 
 import { useAuth } from '@/contexts/AuthContext';
@@ -25,6 +25,9 @@ const Register = () => {
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const { signUp, user } = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const [dateOfBirth, setDateOfBirth] = useState('');
 
   useEffect(() => {
     if (user) {
@@ -32,10 +35,20 @@ const Register = () => {
     }
   }, [user, router]);
 
+  useEffect(() => {
+    const fname = searchParams.get('fname');
+    const lname = searchParams.get('lname');
+    const emailParam = searchParams.get('email');
+
+    if (fname) setFirstName(fname);
+    if (lname) setLastName(lname);
+    if (emailParam) setEmail(emailParam);
+  }, [searchParams]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!firstName || !lastName || !email || !password) {
-      toast.error("Please fill in all required fields");
+    if (!firstName || !lastName || !email || !password || !dateOfBirth) {
+      toast.error("Please fill in all required fields including Date of Birth");
       return;
     }
 
@@ -65,7 +78,12 @@ const Register = () => {
     }
 
     setLoading(true);
-    const { error } = await signUp(email, password, { first_name: firstName, middle_name: middleName, last_name: lastName });
+    const { error } = await signUp(email, password, {
+      first_name: firstName,
+      middle_name: middleName,
+      last_name: lastName,
+      date_of_birth: new Date(dateOfBirth)
+    });
 
     if (error) {
       toast.error(error.message || "Registration Failed");
@@ -130,6 +148,19 @@ const Register = () => {
                       required
                     />
                   </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                  <Input
+                    id="dateOfBirth"
+                    type="date"
+                    className="mt-1 focus-visible:outline-none ring-transparent focus-visible:ring-0 focus-visible:border-orange-900"
+                    value={dateOfBirth}
+                    onChange={(e) => setDateOfBirth(e.target.value)}
+                    max={new Date().toISOString().split('T')[0]}
+                    required
+                  />
                 </div>
 
                 <div>

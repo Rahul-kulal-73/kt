@@ -1,9 +1,28 @@
+'use client';
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const languages = ["Hindi", "English", "Gujarati", "Tamil", "Bengali"];
 
 export default function HeroSection() {
+  const router = useRouter();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+
+  const handleContinue = () => {
+    if (firstName && lastName && email) {
+      router.push(`/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}`);
+    } else {
+      // Basic validation feedback or just push anyway and let register handle it?
+      // Better to push what we have.
+      router.push(`/register?fname=${encodeURIComponent(firstName)}&lname=${encodeURIComponent(lastName)}&email=${encodeURIComponent(email)}`);
+    }
+  };
+
   return (
     <section id="home" className="min-h-screen bg-gradient-nature flex items-center relative overflow-hidden pt-0 pb-16">
       <div className="absolute inset-0 opacity-5 pointer-events-none">
@@ -95,11 +114,15 @@ export default function HeroSection() {
                   <input
                     type="text"
                     placeholder="First name"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
                     className="px-4 py-3 border border-kutumba-border rounded-lg focus:ring-2 focus:ring-kutumba-teal focus:border-kutumba-teal outline-none bg-white"
                   />
                   <input
                     type="text"
                     placeholder="Last name"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     className="px-4 py-3 border border-kutumba-border rounded-lg focus:ring-2 focus:ring-kutumba-teal focus:border-kutumba-teal outline-none bg-white"
                   />
                 </div>
@@ -107,28 +130,17 @@ export default function HeroSection() {
                 <input
                   type="email"
                   placeholder="Email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 border border-kutumba-border rounded-lg focus:ring-2 focus:ring-kutumba-teal focus:border-kutumba-teal outline-none bg-white"
                 />
 
-                <div className="grid grid-cols-2 gap-3">
-                  <input
-                    type="text"
-                    placeholder="Father&apos;s name"
-                    className="px-4 py-3 border border-kutumba-border rounded-lg focus:ring-2 focus:ring-kutumba-teal focus:border-kutumba-teal outline-none bg-white"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Mother&apos;s name"
-                    className="px-4 py-3 border border-kutumba-border rounded-lg focus:ring-2 focus:ring-kutumba-teal focus:border-kutumba-teal outline-none bg-white"
-                  />
-                </div>
-
-                <Link
-                  href="/register"
+                <button
+                  onClick={handleContinue}
                   className="inline-flex items-center justify-center w-full bg-kutumba-maroon hover:bg-kutumba-maroon/90 text-white py-3 text-lg shadow-kutumba rounded-md"
                 >
                   Continue
-                </Link>
+                </button>
 
                 <p className="text-xs text-kutumba-muted text-center">
                   Already have an account?{" "}
