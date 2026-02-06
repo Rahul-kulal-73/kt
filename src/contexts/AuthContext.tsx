@@ -111,10 +111,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    const signOut = () => {
-        setUser(null);
-        localStorage.removeItem('user');
-        router.push('/login');
+    const signOut = async () => {
+        try {
+            await fetch('/api/auth/logout', { method: 'POST' });
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            setUser(null);
+            localStorage.removeItem('user');
+            router.push('/login');
+        }
     };
 
     const updateUser = (updatedUser: Partial<User>) => {
