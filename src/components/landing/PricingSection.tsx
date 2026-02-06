@@ -111,7 +111,7 @@ export default function PricingSection() {
                   {plan.features.map((feature, index) => (
                     <li key={feature} className="flex items-start gap-3">
                       <Check className="h-5 w-5 text-kutumba-teal shrink-0 mt-0.5" />
-                      <span className={`text-sm ${(plan.popular && index > 1) || (plan.isFree && index > 4) ? "blur-sm select-none" : ""}`}>{feature}</span>
+                      <span className={`text-sm ${(plan.popular && index > 1) || (plan.isFree && index > 3) ? "blur-sm select-none" : ""}`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
