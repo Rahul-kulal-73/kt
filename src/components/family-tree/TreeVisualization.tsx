@@ -479,10 +479,8 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
         getExportData: async (options) => {
             if (!contentRef.current) throw new Error('Tree content not found');
 
-            // 1. Calculate Bounding Box of the Layout
-            // Default bounds if empty
+            // 1. Calculate Bounding Box
             let minX = 0, minY = 0, maxX = 800, maxY = 600;
-
             const vals = Object.values(layout);
             if (vals.length > 0) {
                 minX = Math.min(...vals.map(p => p.x));
@@ -491,35 +489,55 @@ export const TreeVisualization = React.forwardRef<TreeVisualizationHandle, TreeV
                 maxY = Math.max(...vals.map(p => p.y + CARD_H));
             }
 
-            // Add Padding
             const PADDING = 50;
             const fullWidth = maxX - minX + (PADDING * 2);
             const fullHeight = maxY - minY + (PADDING * 2);
 
-            // 2. Generate Image with specific transform to capture everything
-            // We need to shift the content so that (minX, minY) moves to (PADDING, PADDING)
-            // And we ensure the scale is 1 (or custom if passed)
             const exportScale = options?.scale || 1.0;
 
-            // Note: toPng 'style' prop overrides the element's style during capture
-            const dataUrl = await toPng(contentRef.current, {
-                backgroundColor: '#F5F5F5',
-                width: fullWidth * exportScale,
-                height: fullHeight * exportScale,
-                style: {
-                    // Reset transform to identity, then translate to positive coordinates
-                    transform: `scale(${exportScale}) translate(${-minX + PADDING}px, ${-minY + PADDING}px)`,
-                    transformOrigin: 'top left',
-                    width: 'auto', // Allow it to expand
-                    height: 'auto'
-                }
-            });
+            // 2. Preserve Original State
+            const originalTransform = contentRef.current.style.transform;
+            const originalWidth = contentRef.current.style.width;
+            const originalHeight = contentRef.current.style.height;
 
-            return {
-                dataUrl,
-                width: fullWidth * exportScale,
-                height: fullHeight * exportScale
-            };
+            // 3. Apply "Reset" Styles to force full visibility in DOM
+            // We shift the content so its top-left (minX, minY) moves to (PADDING, PADDING)
+            // And we force the container to be large enough.
+            contentRef.current.style.transform = `translate(${-minX + PADDING}px, ${-minY + PADDING}px)`;
+            contentRef.current.style.width = `${fullWidth}px`;
+            contentRef.current.style.height = `${fullHeight}px`;
+
+            try {
+                // Wait a microtask to allow style calc? Usually not needed strictly for sync paint but good practice
+                // However, toPng captures current state.
+
+                // 4. Capture
+                const dataUrl = await toPng(contentRef.current, {
+                    backgroundColor: '#F5F5F5',
+                    width: fullWidth * exportScale,
+                    height: fullHeight * exportScale,
+                    style: {
+                        // Apply scale here during capture transform
+                        transform: `scale(${exportScale})`,
+                        transformOrigin: 'top left',
+                        width: `${fullWidth}px`,
+                        height: `${fullHeight}px`
+                    }
+                });
+
+                return {
+                    dataUrl,
+                    width: fullWidth * exportScale,
+                    height: fullHeight * exportScale
+                };
+            } finally {
+                // 5. Restore Original State
+                if (contentRef.current) {
+                    contentRef.current.style.transform = originalTransform;
+                    contentRef.current.style.width = originalWidth;
+                    contentRef.current.style.height = originalHeight;
+                }
+            }
         }
     }));
 
