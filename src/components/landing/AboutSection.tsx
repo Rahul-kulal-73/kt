@@ -33,8 +33,8 @@ export default function AboutSection() {
             src="/kutumba-tree-logo.png"
             alt="KutumbaTree community"
             fill
-            className="object-contain p-8"
-            sizes="(min-width: 1024px) 50vw, 100vw"
+            className="object-contain p-8 scale-120"
+            sizes="(min-width: 1024px) 80vw, 100vw"
           />
         </div>
       </div>
