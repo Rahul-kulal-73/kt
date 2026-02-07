@@ -21,6 +21,14 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [paths, setPaths] = useState<string[]>([]);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 768);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     const containerRef = useRef<HTMLDivElement>(null);
     const centerRef = useRef<HTMLDivElement>(null);
@@ -124,7 +132,9 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
                 <div className={styles.pickerSection}>
                     {!existingRelations.hasFather && (
                         <div ref={fatherRef} className={`${styles.pickerCard} ${styles.posFather} ${styles.maleRole}`} onClick={() => handleSelect('parent', 'male')}>
-                            <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>+</div>
+                            <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>
+                                {isMobile ? <img src="/male-avatar.png" alt="Father" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                            </div>
                             <div className={styles.pickerInfo}>
                                 <div className={styles.pickerTitle}>Add Father</div>
                                 <div className={styles.pickerSub}>Add Parent</div>
@@ -133,7 +143,9 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
                     )}
                     {!existingRelations.hasMother && (
                         <div ref={motherRef} className={`${styles.pickerCard} ${styles.posMother} ${styles.femaleRole}`} onClick={() => handleSelect('parent', 'female')}>
-                            <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>+</div>
+                            <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>
+                                {isMobile ? <img src="/female-avatar.png" alt="Mother" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                            </div>
                             <div className={styles.pickerInfo}>
                                 <div className={styles.pickerTitle}>Add Mother</div>
                                 <div className={styles.pickerSub}>Add Parent</div>
@@ -154,14 +166,18 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
                         </div>
                     )}
                     <div ref={brotherRef} className={`${styles.pickerCard} ${styles.posBrother} ${styles.maleRole}`} onClick={() => handleSelect('sibling', 'male')}>
-                        <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>+</div>
+                        <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>
+                            {isMobile ? <img src="/male-avatar.png" alt="Brother" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                        </div>
                         <div className={styles.pickerInfo}>
                             <div className={styles.pickerTitle}>Add Brother</div>
                             <div className={styles.pickerSub}>Add Sibling</div>
                         </div>
                     </div>
                     <div ref={sisterRef} className={`${styles.pickerCard} ${styles.posSister} ${styles.femaleRole}`} onClick={() => handleSelect('sibling', 'female')}>
-                        <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>+</div>
+                        <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>
+                            {isMobile ? <img src="/female-avatar.png" alt="Sister" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                        </div>
                         <div className={styles.pickerInfo}>
                             <div className={styles.pickerTitle}>Add Sister</div>
                             <div className={styles.pickerSub}>Add Sibling</div>
@@ -172,14 +188,18 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
                 {/* SECTION 3: CHILDREN */}
                 <div className={styles.pickerSection}>
                     <div ref={sonRef} className={`${styles.pickerCard} ${styles.posSon} ${styles.maleRole}`} onClick={() => handleSelect('child', 'male')}>
-                        <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>+</div>
+                        <div className={styles.pickerAvatar} style={{ background: '#eef6fc', color: '#4a90e2' }}>
+                            {isMobile ? <img src="/male-avatar.png" alt="Son" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                        </div>
                         <div className={styles.pickerInfo}>
                             <div className={styles.pickerTitle}>Add Son</div>
                             <div className={styles.pickerSub}>Add Child</div>
                         </div>
                     </div>
                     <div ref={daughterRef} className={`${styles.pickerCard} ${styles.posDaughter} ${styles.femaleRole}`} onClick={() => handleSelect('child', 'female')}>
-                        <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>+</div>
+                        <div className={styles.pickerAvatar} style={{ background: '#fceef6', color: '#e24a8d' }}>
+                            {isMobile ? <img src="/female-avatar.png" alt="Daughter" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : '+'}
+                        </div>
                         <div className={styles.pickerInfo}>
                             <div className={styles.pickerTitle}>Add Daughter</div>
                             <div className={styles.pickerSub}>Add Child</div>
