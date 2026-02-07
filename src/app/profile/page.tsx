@@ -545,345 +545,330 @@ export default function ProfilePage() {
 
 
                     {/* Education */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-gold)] to-[var(--color-kutumba-maroon)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-gold)]">
-                                <div className="p-2 bg-yellow-50 rounded-full text-[var(--color-kutumba-gold)]">
-                                    <GraduationCap className="h-5 w-5" />
-                                </div>
-                                Education
-                            </CardTitle>
-                            <CardDescription>Your educational background</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            {education.map((edu, index) => (
-                                <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
-                                        onClick={() => removeEducation(index)}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Degree</Label>
-                                            <Input
-                                                value={edu.degree}
-                                                onChange={(e) => updateEducation(index, 'degree', e.target.value)}
-                                                placeholder="B.Tech in Computer Science"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Institution</Label>
-                                            <Input
-                                                value={edu.institution}
-                                                onChange={(e) => updateEducation(index, 'institution', e.target.value)}
-                                                placeholder="IIT Mumbai"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Year</Label>
-                                            <Input
-                                                type="number"
-                                                value={edu.year}
-                                                onChange={(e) => updateEducation(index, 'year', parseInt(e.target.value) || '')}
-                                                placeholder="2020"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Location</Label>
-                                            <Input
-                                                value={edu.location}
-                                                onChange={(e) => updateEducation(index, 'location', e.target.value)}
-                                                placeholder="Mumbai, India"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            <Button variant="outline" onClick={addEducation} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-gold)] hover:text-[var(--color-kutumba-gold)] hover:bg-yellow-50/50 transition-all text-gray-500">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Education
-                            </Button>
-                        </CardContent>
-                    </Card>
-                    {/* Work History */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-teal)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-maroon)]">
-                                <div className="p-2 bg-red-50 rounded-full text-[var(--color-kutumba-maroon)]">
-                                    <Briefcase className="h-5 w-5" />
-                                </div>
-                                Work History
-                            </CardTitle>
-                            <CardDescription>Your professional experience</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            {workHistory.map((work, index) => (
-                                <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
-                                        onClick={() => removeWork(index)}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Company</Label>
-                                            <Input
-                                                value={work.company}
-                                                onChange={(e) => updateWork(index, 'company', e.target.value)}
-                                                placeholder="Tech Corp"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Position</Label>
-                                            <Input
-                                                value={work.position}
-                                                onChange={(e) => updateWork(index, 'position', e.target.value)}
-                                                placeholder="Software Engineer"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Start Year</Label>
-                                            <Input
-                                                type="number"
-                                                value={work.start_year}
-                                                onChange={(e) => updateWork(index, 'start_year', parseInt(e.target.value) || '')}
-                                                placeholder="2020"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">End Year</Label>
-                                            <Input
-                                                type="number"
-                                                value={work.end_year}
-                                                onChange={(e) => updateWork(index, 'end_year', parseInt(e.target.value) || '')}
-                                                placeholder="2024 or leave blank if current"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="font-medium text-gray-700">Location</Label>
-                                            <Input
-                                                value={work.location}
-                                                onChange={(e) => updateWork(index, 'location', e.target.value)}
-                                                placeholder="Bangalore, India"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                            <Button variant="outline" onClick={addWork} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-maroon)] hover:text-[var(--color-kutumba-maroon)] hover:bg-red-50/50 transition-all text-gray-500">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Work Experience
-                            </Button>
-                        </CardContent>
-                    </Card>
+                    <ProfileSection
+                        title="Education"
+                        description="Your educational background"
+                        icon={GraduationCap}
+                        headerTextColor="text-[var(--color-kutumba-gold)]"
+                        iconWrapperClassName="bg-yellow-50 text-[var(--color-kutumba-gold)]"
+                        gradientClassName="from-[var(--color-kutumba-gold)] to-[var(--color-kutumba-maroon)]"
+                    >
 
-                    {/* Life Events */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-gold)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-maroon)]">
-                                <div className="p-2 bg-pink-50 rounded-full text-[var(--color-kutumba-maroon)]">
-                                    <Heart className="h-5 w-5" />
-                                </div>
-                                Life Events
-                            </CardTitle>
-                            <CardDescription>Major milestones in your life</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            {lifeEvents.map((event, index) => (
-                                <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
-                                        onClick={() => removeLifeEvent(index)}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Year</Label>
-                                            <Input
-                                                type="number"
-                                                value={event.year}
-                                                onChange={(e) => updateLifeEvent(index, 'year', parseInt(e.target.value) || '')}
-                                                placeholder="2015"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Event Type</Label>
-                                            <Select
-                                                value={event.event_type}
-                                                onValueChange={(value) => updateLifeEvent(index, 'event_type', value)}
-                                            >
-                                                <SelectTrigger className="bg-white">
-                                                    <SelectValue />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="education">Education</SelectItem>
-                                                    <SelectItem value="work">Work</SelectItem>
-                                                    <SelectItem value="travel">Travel</SelectItem>
-                                                    <SelectItem value="milestone">Milestone</SelectItem>
-                                                    <SelectItem value="other">Other</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="font-medium text-gray-700">Title</Label>
-                                            <Input
-                                                value={event.title}
-                                                onChange={(e) => updateLifeEvent(index, 'title', e.target.value)}
-                                                placeholder="Graduated from College"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="font-medium text-gray-700">Description</Label>
-                                            <Input
-                                                value={event.description}
-                                                onChange={(e) => updateLifeEvent(index, 'description', e.target.value)}
-                                                placeholder="Brief description of the event"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="font-medium text-gray-700">Location</Label>
-                                            <Input
-                                                value={event.location}
-                                                onChange={(e) => updateLifeEvent(index, 'location', e.target.value)}
-                                                placeholder="City, Country"
-                                                className="bg-white"
-                                            />
-                                        </div>
+                        {education.map((edu, index) => (
+                            <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                                    onClick={() => removeEducation(index)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Degree</Label>
+                                        <Input
+                                            value={edu.degree}
+                                            onChange={(e) => updateEducation(index, 'degree', e.target.value)}
+                                            placeholder="B.Tech in Computer Science"
+                                            className="bg-white"
+                                        />
                                     </div>
-                                </div>
-                            ))}
-                            <Button variant="outline" onClick={addLifeEvent} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-maroon)] hover:text-[var(--color-kutumba-maroon)] hover:bg-pink-50/50 transition-all text-gray-500">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Life Event
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Location History */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-teal)] to-[var(--color-kutumba-green)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-teal)]">
-                                <div className="p-2 bg-teal-50 rounded-full text-[var(--color-kutumba-teal)]">
-                                    <MapPin className="h-5 w-5" />
-                                </div>
-                                Location History
-                            </CardTitle>
-                            <CardDescription>Places you&apos;ve lived or traveled to</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            {locationHistory.map((loc, index) => (
-                                <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
-                                    <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
-                                        onClick={() => removeLocation(index)}
-                                    >
-                                        <X className="h-4 w-4" />
-                                    </Button>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Year</Label>
-                                            <Input
-                                                type="number"
-                                                value={loc.year}
-                                                onChange={(e) => updateLocation(index, 'year', parseInt(e.target.value) || '')}
-                                                placeholder="2015"
-                                                className="bg-white"
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <Label className="font-medium text-gray-700">Location Name</Label>
-                                            <Input
-                                                value={loc.location}
-                                                onChange={(e) => updateLocation(index, 'location', e.target.value)}
-                                                placeholder="My hometown"
-                                                className="bg-white"
-                                            />
-                                        </div>
-
-                                        <div className="md:col-span-2">
-                                            <LocationSelector
-                                                country={loc.country}
-                                                state={loc.state}
-                                                city={loc.city}
-                                                onLocationChange={(field, value) => updateLocationHistoryItem(index, field, value)}
-                                            />
-                                        </div>
-                                        <div className="md:col-span-2 space-y-2">
-                                            <Label className="font-medium text-gray-700">Description</Label>
-                                            <Input
-                                                value={loc.description}
-                                                onChange={(e) => updateLocation(index, 'description', e.target.value)}
-                                                placeholder="Why this location is significant"
-                                                className="bg-white"
-                                            />
-                                        </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Institution</Label>
+                                        <Input
+                                            value={edu.institution}
+                                            onChange={(e) => updateEducation(index, 'institution', e.target.value)}
+                                            placeholder="IIT Mumbai"
+                                            className="bg-white"
+                                        />
                                     </div>
-                                </div>
-                            ))}
-                            <Button variant="outline" onClick={addLocation} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-teal)] hover:text-[var(--color-kutumba-teal)] hover:bg-teal-50/50 transition-all text-gray-500">
-                                <Plus className="h-4 w-4 mr-2" />
-                                Add Location History
-                            </Button>
-                        </CardContent>
-                    </Card>
-
-                    {/* Account Security Information (Visible to User) */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-gray-500 to-slate-800" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-slate-800">
-                                <div className="p-2 bg-slate-100 rounded-full text-slate-800">
-                                    <ViewIcon className="h-5 w-5" />
-                                </div>
-                                Account Security
-                            </CardTitle>
-                            <CardDescription>Recent activity on your account</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-1">
-                                    <Label className="text-gray-500 text-xs uppercase tracking-wider font-semibold">Last Logged In</Label>
-                                    <div className="font-mono text-sm bg-slate-50 p-2 rounded border border-slate-100">
-                                        {originalData?.user?.last_login ? new Date(originalData.user.last_login).toLocaleString() : 'Just now'}
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Year</Label>
+                                        <Input
+                                            type="number"
+                                            value={edu.year}
+                                            onChange={(e) => updateEducation(index, 'year', parseInt(e.target.value) || '')}
+                                            placeholder="2020"
+                                            className="bg-white"
+                                        />
                                     </div>
-                                </div>
-                                <div className="space-y-1">
-                                    <Label className="text-gray-500 text-xs uppercase tracking-wider font-semibold">IP Address</Label>
-                                    <div className="font-mono text-sm bg-slate-50 p-2 rounded border border-slate-100">
-                                        {originalData?.user?.last_ip || 'Current Session'}
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Location</Label>
+                                        <Input
+                                            value={edu.location}
+                                            onChange={(e) => updateEducation(index, 'location', e.target.value)}
+                                            placeholder="Mumbai, India"
+                                            className="bg-white"
+                                        />
                                     </div>
                                 </div>
                             </div>
-                        </CardContent>
-                    </Card>
+                        ))}
+                        <Button variant="outline" onClick={addEducation} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-gold)] hover:text-[var(--color-kutumba-gold)] hover:bg-yellow-50/50 transition-all text-gray-500">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Education
+                        </Button>
+                    </ProfileSection>
+
+                    {/* Work History */}
+                    <ProfileSection
+                        title="Work History"
+                        description="Your professional experience"
+                        icon={Briefcase}
+                        headerTextColor="text-[var(--color-kutumba-maroon)]"
+                        iconWrapperClassName="bg-red-50 text-[var(--color-kutumba-maroon)]"
+                        gradientClassName="from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-teal)]"
+                    >
+
+                        {workHistory.map((work, index) => (
+                            <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                                    onClick={() => removeWork(index)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Company</Label>
+                                        <Input
+                                            value={work.company}
+                                            onChange={(e) => updateWork(index, 'company', e.target.value)}
+                                            placeholder="Tech Corp"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Position</Label>
+                                        <Input
+                                            value={work.position}
+                                            onChange={(e) => updateWork(index, 'position', e.target.value)}
+                                            placeholder="Software Engineer"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Start Year</Label>
+                                        <Input
+                                            type="number"
+                                            value={work.start_year}
+                                            onChange={(e) => updateWork(index, 'start_year', parseInt(e.target.value) || '')}
+                                            placeholder="2020"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">End Year</Label>
+                                        <Input
+                                            type="number"
+                                            value={work.end_year}
+                                            onChange={(e) => updateWork(index, 'end_year', parseInt(e.target.value) || '')}
+                                            placeholder="2024 or leave blank if current"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="font-medium text-gray-700">Location</Label>
+                                        <Input
+                                            value={work.location}
+                                            onChange={(e) => updateWork(index, 'location', e.target.value)}
+                                            placeholder="Bangalore, India"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <Button variant="outline" onClick={addWork} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-maroon)] hover:text-[var(--color-kutumba-maroon)] hover:bg-red-50/50 transition-all text-gray-500">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Work Experience
+                        </Button>
+                    </ProfileSection>
+
+
+                    {/* Life Events */}
+                    <ProfileSection
+                        title="Life Events"
+                        description="Major milestones in your life"
+                        icon={Heart}
+                        headerTextColor="text-[var(--color-kutumba-maroon)]"
+                        iconWrapperClassName="bg-pink-50 text-[var(--color-kutumba-maroon)]"
+                        gradientClassName="from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-gold)]"
+                    >
+
+                        {lifeEvents.map((event, index) => (
+                            <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                                    onClick={() => removeLifeEvent(index)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Year</Label>
+                                        <Input
+                                            type="number"
+                                            value={event.year}
+                                            onChange={(e) => updateLifeEvent(index, 'year', parseInt(e.target.value) || '')}
+                                            placeholder="2015"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Event Type</Label>
+                                        <Select
+                                            value={event.event_type}
+                                            onValueChange={(value) => updateLifeEvent(index, 'event_type', value)}
+                                        >
+                                            <SelectTrigger className="bg-white">
+                                                <SelectValue />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="education">Education</SelectItem>
+                                                <SelectItem value="work">Work</SelectItem>
+                                                <SelectItem value="travel">Travel</SelectItem>
+                                                <SelectItem value="milestone">Milestone</SelectItem>
+                                                <SelectItem value="other">Other</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="font-medium text-gray-700">Title</Label>
+                                        <Input
+                                            value={event.title}
+                                            onChange={(e) => updateLifeEvent(index, 'title', e.target.value)}
+                                            placeholder="Graduated from College"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="font-medium text-gray-700">Description</Label>
+                                        <Input
+                                            value={event.description}
+                                            onChange={(e) => updateLifeEvent(index, 'description', e.target.value)}
+                                            placeholder="Brief description of the event"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="font-medium text-gray-700">Location</Label>
+                                        <Input
+                                            value={event.location}
+                                            onChange={(e) => updateLifeEvent(index, 'location', e.target.value)}
+                                            placeholder="City, Country"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <Button variant="outline" onClick={addLifeEvent} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-maroon)] hover:text-[var(--color-kutumba-maroon)] hover:bg-pink-50/50 transition-all text-gray-500">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Life Event
+                        </Button>
+                    </ProfileSection>
+
+
+                    {/* Location History */}
+                    <ProfileSection
+                        title="Location History"
+                        description="Places you&apos;ve lived or traveled to"
+                        icon={MapPin}
+                        headerTextColor="text-[var(--color-kutumba-teal)]"
+                        iconWrapperClassName="bg-teal-50 text-[var(--color-kutumba-teal)]"
+                        gradientClassName="from-[var(--color-kutumba-teal)] to-[var(--color-kutumba-green)]"
+                    >
+
+                        {locationHistory.map((loc, index) => (
+                            <div key={index} className="p-6 border border-gray-100 rounded-xl space-y-4 relative bg-gray-50 hover:bg-white hover:shadow-md transition-all duration-300">
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    className="absolute top-4 right-4 text-gray-400 hover:text-red-500 hover:bg-red-50"
+                                    onClick={() => removeLocation(index)}
+                                >
+                                    <X className="h-4 w-4" />
+                                </Button>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Year</Label>
+                                        <Input
+                                            type="number"
+                                            value={loc.year}
+                                            onChange={(e) => updateLocation(index, 'year', parseInt(e.target.value) || '')}
+                                            placeholder="2015"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label className="font-medium text-gray-700">Location Name</Label>
+                                        <Input
+                                            value={loc.location}
+                                            onChange={(e) => updateLocation(index, 'location', e.target.value)}
+                                            placeholder="My hometown"
+                                            className="bg-white"
+                                        />
+                                    </div>
+
+                                    <div className="md:col-span-2">
+                                        <LocationSelector
+                                            country={loc.country}
+                                            state={loc.state}
+                                            city={loc.city}
+                                            onLocationChange={(field, value) => updateLocationHistoryItem(index, field, value)}
+                                        />
+                                    </div>
+                                    <div className="md:col-span-2 space-y-2">
+                                        <Label className="font-medium text-gray-700">Description</Label>
+                                        <Input
+                                            value={loc.description}
+                                            onChange={(e) => updateLocation(index, 'description', e.target.value)}
+                                            placeholder="Why this location is significant"
+                                            className="bg-white"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                        <Button variant="outline" onClick={addLocation} className="w-full border-dashed border-2 py-6 hover:border-[var(--color-kutumba-teal)] hover:text-[var(--color-kutumba-teal)] hover:bg-teal-50/50 transition-all text-gray-500">
+                            <Plus className="h-4 w-4 mr-2" />
+                            Add Location History
+                        </Button>
+                    </ProfileSection>
+
+
+                    {/* Account Security Information (Visible to User) */}
+                    <ProfileSection
+                        title="Account Security"
+                        description="Recent activity on your account"
+                        icon={ViewIcon}
+                        headerTextColor="text-slate-800"
+                        iconWrapperClassName="bg-slate-100 text-slate-800"
+                        gradientClassName="from-gray-500 to-slate-800"
+                    >
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-1">
+                                <Label className="text-gray-500 text-xs uppercase tracking-wider font-semibold">Last Logged In</Label>
+                                <div className="font-mono text-sm bg-slate-50 p-2 rounded border border-slate-100">
+                                    {originalData?.user?.last_login ? new Date(originalData.user.last_login).toLocaleString() : 'Just now'}
+                                </div>
+                            </div>
+                            <div className="space-y-1">
+                                <Label className="text-gray-500 text-xs uppercase tracking-wider font-semibold">IP Address</Label>
+                                <div className="font-mono text-sm bg-slate-50 p-2 rounded border border-slate-100">
+                                    {originalData?.user?.last_ip || 'Current Session'}
+                                </div>
+                            </div>
+                        </div>
+                    </ProfileSection>
+
                 </div >
 
                 <div className="flex justify-end pt-6">
