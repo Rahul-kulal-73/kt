@@ -26,6 +26,7 @@ import {
 import Link from 'next/link';
 
 import { LocationSelector } from '@/components/LocationSelector';
+import { ProfileSection } from '@/components/profile/ProfileSection';
 
 interface EducationEntry {
     degree: string;
@@ -390,168 +391,158 @@ export default function ProfilePage() {
             <main className="container mx-auto px-4 py-8 max-w-5xl space-y-8">
                 <div className="grid grid-cols-1 gap-8">
                     {/* Basic Information */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-gold)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-maroon)]">
-                                <div className="p-2 bg-[var(--color-kutumba-light-teal)] rounded-full text-[var(--color-kutumba-teal)]">
-                                    <User className="h-5 w-5" />
-                                </div>
-                                Basic Information
-                            </CardTitle>
-                            <CardDescription>Your personal details displayed on your family tree</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="firstName" className="font-medium text-gray-700">First Name</Label>
-                                    <Input
-                                        id="firstName"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="middleName" className="font-medium text-gray-700">Middle Name</Label>
-                                    <Input
-                                        id="middleName"
-                                        value={middleName}
-                                        onChange={(e) => setMiddleName(e.target.value)}
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="lastName" className="font-medium text-gray-700">Last Name</Label>
-                                    <Input
-                                        id="lastName"
-                                        value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="phone" className="font-medium text-gray-700">Phone Number</Label>
-                                    <Input
-                                        id="phone"
-                                        value={phone}
-                                        onChange={(e) => setPhone(e.target.value)}
-                                        placeholder="+91 9876543210"
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="religion" className="font-medium text-gray-700">Religion</Label>
-                                    <div className="space-y-2">
-                                        <Select
-                                            value={isManualReligion ? 'other' : (RELIGIONS.some(r => r.toLowerCase() === religion.toLowerCase()) ? religion.toLowerCase() : (religion ? 'other' : ''))}
-                                            onValueChange={(value) => {
-                                                if (value === 'other') {
-                                                    setIsManualReligion(true);
-                                                    setReligion('');
-                                                } else {
-                                                    setIsManualReligion(false);
-                                                    setReligion(RELIGIONS.find(r => r.toLowerCase() === value) || value);
-                                                }
-                                            }}
-                                        >
-                                            <SelectTrigger className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50">
-                                                <SelectValue placeholder="Select Religion" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {RELIGIONS.map((rel) => (
-                                                    <SelectItem key={rel} value={rel.toLowerCase()}>{rel}</SelectItem>
-                                                ))}
-                                                <SelectItem value="other">Other</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                        {isManualReligion && (
-                                            <Input
-                                                value={religion}
-                                                onChange={(e) => setReligion(e.target.value)}
-                                                placeholder="Enter your religion"
-                                                className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50 animate-in fade-in slide-in-from-top-1 duration-200"
-                                            />
-                                        )}
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    <ProfileSection
+                        title="Basic Information"
+                        description="Your personal details displayed on your family tree"
+                        icon={User}
+                        headerTextColor="text-[var(--color-kutumba-maroon)]"
+                        iconWrapperClassName="bg-[var(--color-kutumba-light-teal)] text-[var(--color-kutumba-teal)]"
+                        gradientClassName="from-[var(--color-kutumba-maroon)] to-[var(--color-kutumba-gold)]"
+                    >
 
-                    {/* Birth Information */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-green)] to-[var(--color-kutumba-teal)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-green)]">
-                                <div className="p-2 bg-[var(--color-kutumba-light-teal)] rounded-full text-[var(--color-kutumba-green)]">
-                                    <Calendar className="h-5 w-5" />
-                                </div>
-                                Birth Information
-                            </CardTitle>
-                            <CardDescription>Help us create your AI life story</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div className="space-y-2">
-                                    <Label htmlFor="dateOfBirth" className="font-medium text-gray-700">Date of Birth *</Label>
-                                    <Input
-                                        id="dateOfBirth"
-                                        type="date"
-                                        value={dateOfBirth}
-                                        onChange={(e) => setDateOfBirth(e.target.value)}
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-green)] focus:ring-[var(--color-kutumba-green)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label htmlFor="placeOfBirth" className="font-medium text-gray-700">Place of Birth *</Label>
-                                    <Input
-                                        id="placeOfBirth"
-                                        value={placeOfBirth}
-                                        onChange={(e) => setPlaceOfBirth(e.target.value)}
-                                        placeholder="Hospital name or area"
-                                        className="h-11 border-gray-200 focus:border-[var(--color-kutumba-green)] focus:ring-[var(--color-kutumba-green)] transition-all bg-gray-50/50"
-                                    />
-                                </div>
-                            </div>
-
-                            <LocationSelector
-                                country={birthCountry}
-                                state={birthState}
-                                city={birthCity}
-                                onLocationChange={handleBirthLocationChange}
-                                labels={{ country: 'Country', state: 'State', city: 'City' }}
-                            />
-                        </CardContent>
-                    </Card>
-
-                    {/* Current Location */}
-                    <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">
-                        <div className="h-2 bg-gradient-to-r from-[var(--color-kutumba-teal)] to-[var(--color-kutumba-maroon)]" />
-                        <CardHeader className="pb-4 border-b border-gray-100 bg-white">
-                            <CardTitle className="flex items-center gap-3 text-xl text-[var(--color-kutumba-teal)]">
-                                <div className="p-2 bg-[var(--color-kutumba-light-teal)] rounded-full text-[var(--color-kutumba-teal)]">
-                                    <MapPin className="h-5 w-5" />
-                                </div>
-                                Current Location
-                            </CardTitle>
-                            <CardDescription>Where you live now *</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6 pt-6 bg-white">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                             <div className="space-y-2">
-                                <Label htmlFor="currentLocation" className="font-medium text-gray-700">Current Location *</Label>
+                                <Label htmlFor="firstName" className="font-medium text-gray-700">First Name</Label>
                                 <Input
-                                    id="currentLocation"
-                                    value={currentLocation}
-                                    onChange={(e) => setCurrentLocation(e.target.value)}
-                                    placeholder="City, State, Country"
+                                    id="firstName"
+                                    value={firstName}
+                                    onChange={(e) => setFirstName(e.target.value)}
                                     className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
                                 />
                             </div>
-                        </CardContent>
-                    </Card>
+                            <div className="space-y-2">
+                                <Label htmlFor="middleName" className="font-medium text-gray-700">Middle Name</Label>
+                                <Input
+                                    id="middleName"
+                                    value={middleName}
+                                    onChange={(e) => setMiddleName(e.target.value)}
+                                    className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="lastName" className="font-medium text-gray-700">Last Name</Label>
+                                <Input
+                                    id="lastName"
+                                    value={lastName}
+                                    onChange={(e) => setLastName(e.target.value)}
+                                    className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
+                                />
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="phone" className="font-medium text-gray-700">Phone Number</Label>
+                                <Input
+                                    id="phone"
+                                    value={phone}
+                                    onChange={(e) => setPhone(e.target.value)}
+                                    placeholder="+91 9876543210"
+                                    className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="religion" className="font-medium text-gray-700">Religion</Label>
+                                <div className="space-y-2">
+                                    <Select
+                                        value={isManualReligion ? 'other' : (RELIGIONS.some(r => r.toLowerCase() === religion.toLowerCase()) ? religion.toLowerCase() : (religion ? 'other' : ''))}
+                                        onValueChange={(value) => {
+                                            if (value === 'other') {
+                                                setIsManualReligion(true);
+                                                setReligion('');
+                                            } else {
+                                                setIsManualReligion(false);
+                                                setReligion(RELIGIONS.find(r => r.toLowerCase() === value) || value);
+                                            }
+                                        }}
+                                    >
+                                        <SelectTrigger className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50">
+                                            <SelectValue placeholder="Select Religion" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {RELIGIONS.map((rel) => (
+                                                <SelectItem key={rel} value={rel.toLowerCase()}>{rel}</SelectItem>
+                                            ))}
+                                            <SelectItem value="other">Other</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                    {isManualReligion && (
+                                        <Input
+                                            value={religion}
+                                            onChange={(e) => setReligion(e.target.value)}
+                                            placeholder="Enter your religion"
+                                            className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50 animate-in fade-in slide-in-from-top-1 duration-200"
+                                        />
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    </ProfileSection>
+
+
+                    <ProfileSection
+                        title="Birth Information"
+                        description="Help us create your AI life story"
+                        icon={Calendar}
+                        headerTextColor="text-[var(--color-kutumba-green)]"
+                        iconWrapperClassName="bg-[var(--color-kutumba-light-teal)] text-[var(--color-kutumba-green)]"
+                        gradientClassName="from-[var(--color-kutumba-green)] to-[var(--color-kutumba-teal)]"
+                    >
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="space-y-2">
+                                <Label htmlFor="dateOfBirth" className="font-medium text-gray-700">Date of Birth *</Label>
+                                <Input
+                                    id="dateOfBirth"
+                                    type="date"
+                                    value={dateOfBirth}
+                                    onChange={(e) => setDateOfBirth(e.target.value)}
+                                    className="h-11 border-gray-200 focus:border-[var(--color-kutumba-green)] focus:ring-[var(--color-kutumba-green)] transition-all bg-gray-50/50"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label htmlFor="placeOfBirth" className="font-medium text-gray-700">Place of Birth *</Label>
+                                <Input
+                                    id="placeOfBirth"
+                                    value={placeOfBirth}
+                                    onChange={(e) => setPlaceOfBirth(e.target.value)}
+                                    placeholder="Hospital name or area"
+                                    className="h-11 border-gray-200 focus:border-[var(--color-kutumba-green)] focus:ring-[var(--color-kutumba-green)] transition-all bg-gray-50/50"
+                                />
+                            </div>
+                        </div>
+
+                        <LocationSelector
+                            country={birthCountry}
+                            state={birthState}
+                            city={birthCity}
+                            onLocationChange={handleBirthLocationChange}
+                            labels={{ country: 'Country', state: 'State', city: 'City' }}
+                        />
+                    </ProfileSection>
+
+
+                    {/* Current Location */}
+                    <ProfileSection
+                        title="Current Location"
+                        description="Where you live now *"
+                        icon={MapPin}
+                        headerTextColor="text-[var(--color-kutumba-teal)]"
+                        iconWrapperClassName="bg-[var(--color-kutumba-light-teal)] text-[var(--color-kutumba-teal)]"
+                        gradientClassName="from-[var(--color-kutumba-teal)] to-[var(--color-kutumba-maroon)]"
+                    >
+
+                        <div className="space-y-2">
+                            <Label htmlFor="currentLocation" className="font-medium text-gray-700">Current Location *</Label>
+                            <Input
+                                id="currentLocation"
+                                value={currentLocation}
+                                onChange={(e) => setCurrentLocation(e.target.value)}
+                                placeholder="City, State, Country"
+                                className="h-11 border-gray-200 focus:border-[var(--color-kutumba-teal)] focus:ring-[var(--color-kutumba-teal)] transition-all bg-gray-50/50"
+                            />
+                        </div>
+                    </ProfileSection>
+
 
                     {/* Education */}
                     <Card className="border-0 shadow-md hover:shadow-lg transition-all duration-300 overflow-hidden">

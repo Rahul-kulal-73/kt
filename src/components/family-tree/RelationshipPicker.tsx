@@ -158,7 +158,15 @@ export const RelationshipPicker: React.FC<RelationshipPickerProps> = ({
                 <div className={styles.pickerSection}>
                     {!existingRelations.hasSpouse && (
                         <div ref={partnerRef} className={`${styles.pickerCard} ${styles.posPartner} ${styles.neutral}`} onClick={() => handleSelect('spouse')}>
-                            <div className={styles.pickerAvatar} style={{ background: '#eee', color: '#888' }}>+</div>
+                            <div className={styles.pickerAvatar} style={{ background: '#eee', color: '#888' }}>
+                                {isMobile ? (
+                                    <img
+                                        src={(targetMember.gender || '').toLowerCase() === 'male' ? "/female-avatar.png" : "/male-avatar.png"}
+                                        alt="Partner"
+                                        style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }}
+                                    />
+                                ) : '+'}
+                            </div>
                             <div className={styles.pickerInfo}>
                                 <div className={styles.pickerTitle}>Add Partner</div>
                                 <div className={styles.pickerSub}>Spouse / Ex</div>
